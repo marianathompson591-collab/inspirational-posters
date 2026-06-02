@@ -126,9 +126,16 @@
         .generator-form textarea:focus { border-color:var(--accent); }
         .generator-form textarea { min-height:80px; resize:vertical; }
 
-        .canvas-preview { text-align:center; margin-top:20px; display:none; }
+        .canvas-preview { text-align:center; margin-top:24px; display:none; }
         .canvas-preview canvas { max-width:100%; border-radius:12px; box-shadow:var(--shadow); }
         .canvas-preview .preview-actions { margin-top:16px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+        .generate-progress { margin-top:12px; }
+        .generate-progress .spinner {
+            display:inline-block; width:18px; height:18px;
+            border:2px solid var(--border); border-top-color:var(--accent);
+            border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:6px;
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
 
         /* ---------- Gallery Modal ---------- */
         .modal-overlay {
@@ -239,7 +246,7 @@
             <div class="generator-form">
                 <div>
                     <label>人物照片</label>
-                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('photoInput').click()">
+                    <div class="upload-area" id="uploadArea">
                         <div class="upload-placeholder" id="uploadPlaceholder">
                             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                             点击上传人物图片
@@ -249,22 +256,43 @@
                     <input type="file" id="photoInput" accept="image/*">
                 </div>
                 <div>
-                    <label for="quoteInput">人物语录</label>
-                    <input type="text" id="quoteInput" placeholder="例如：Stay hungry, stay foolish." maxlength="120">
+                    <label for="nameInput">人物姓名 *</label>
+                    <input type="text" id="nameInput" placeholder="例如：史蒂夫·乔布斯" maxlength="50">
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <div style="flex:1;">
+                        <label for="birthInput">出生年份</label>
+                        <input type="text" id="birthInput" placeholder="1955" maxlength="10">
+                    </div>
+                    <div style="flex:1;">
+                        <label for="deathInput">逝世年份</label>
+                        <input type="text" id="deathInput" placeholder="2011（在世可不填）" maxlength="10">
+                    </div>
+                </div>
+                <div>
+                    <label for="quote1Input">语录第一句 *</label>
+                    <input type="text" id="quote1Input" placeholder="例如：Stay hungry, stay foolish." maxlength="120">
+                </div>
+                <div>
+                    <label for="quote2Input">语录第二句</label>
+                    <input type="text" id="quote2Input" placeholder="选填，不超过三句" maxlength="120">
+                </div>
+                <div>
+                    <label for="quote3Input">语录第三句</label>
+                    <input type="text" id="quote3Input" placeholder="选填" maxlength="120">
                 </div>
                 <div>
                     <label for="styleInput">海报风格描述</label>
                     <textarea id="styleInput" placeholder="例如：极简黑白、复古胶片、活力暖色……"></textarea>
                 </div>
-                <button class="btn btn-primary" id="generateBtn" onclick="generatePoster()">
-                    生成海报
-                </button>
+                <button class="btn btn-primary" id="generateBtn">生成海报</button>
+                <div class="generate-progress" id="generateProgress" style="display:none; text-align:center; padding:12px; color:var(--accent); font-size:14px;"></div>
             </div>
             <div class="canvas-preview" id="canvasPreview">
                 <canvas id="posterCanvas"></canvas>
                 <div class="preview-actions">
-                    <button class="btn btn-primary" onclick="downloadGenerated()">下载我的海报</button>
-                    <button class="btn btn-download" onclick="saveToGallery()">发布到画廊</button>
+                    <button class="btn btn-primary" id="downloadGeneratedBtn">下载我的海报</button>
+                    <button class="btn btn-download" id="saveToGalleryBtn">发布到画廊</button>
                 </div>
             </div>
         </div>
@@ -277,7 +305,7 @@
     <!-- Gallery Modal -->
     <div class="modal-overlay" id="galleryModal">
         <div class="modal">
-            <button class="modal-close" onclick="closeGallery()">&times;</button>
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
             <h2>朋友们的海报</h2>
             <div class="gallery-grid" id="galleryGrid"></div>
             <div class="gallery-empty" id="galleryEmpty" style="display:none">
@@ -408,118 +436,249 @@
     var uploadPreview = document.getElementById('uploadPreview');
     var uploadPlaceholder = document.getElementById('uploadPlaceholder');
     var photoInput = document.getElementById('photoInput');
-    var uploadedImage = null;
+    var generatedDataUrl = null;
+
+    uploadArea.addEventListener('click', function() { photoInput.click(); });
 
     photoInput.addEventListener('change', function(e) {
         var file = e.target.files[0];
         if (!file) return;
         var reader = new FileReader();
         reader.onload = function(ev) {
-            uploadedImage = new Image();
-            uploadedImage.onload = function() {
+            var img = new Image();
+            img.onload = function() {
                 uploadPreview.src = ev.target.result;
                 uploadPreview.style.display = 'block';
                 uploadPlaceholder.style.display = 'none';
                 uploadArea.classList.add('has-image');
+                uploadedImage = img;
             };
-            uploadedImage.src = ev.target.result;
+            img.src = ev.target.result;
         };
         reader.readAsDataURL(file);
     });
 
+    var uploadedImage = null;
+
     function generatePoster() {
         if (!uploadedImage) { showToast('请先上传人物图片'); return; }
-        var quote = document.getElementById('quoteInput').value.trim();
-        if (!quote) { showToast('请输入人物语录'); return; }
-        var style = document.getElementById('styleInput').value.trim() || '经典励志';
 
+        var nameVal = document.getElementById('nameInput').value.trim();
+        if (!nameVal) { showToast('请输入人物姓名'); return; }
+
+        var quote1 = document.getElementById('quote1Input').value.trim();
+        if (!quote1) { showToast('请至少输入第一句语录'); return; }
+
+        var birth = document.getElementById('birthInput').value.trim();
+        var death = document.getElementById('deathInput').value.trim();
+        var quote2 = document.getElementById('quote2Input').value.trim();
+        var quote3 = document.getElementById('quote3Input').value.trim();
+        var styleVal = document.getElementById('styleInput').value.trim() || '经典励志';
+
+        // Collect quotes
+        var quotes = [quote1];
+        if (quote2) quotes.push(quote2);
+        if (quote3) quotes.push(quote3);
+
+        // Build lifespan string
+        var lifespan = '';
+        if (birth && death) lifespan = birth + ' - ' + death;
+        else if (birth) lifespan = birth + ' - ';
+
+        // Progress
+        var progressEl = document.getElementById('generateProgress');
+        progressEl.style.display = 'block';
+        progressEl.innerHTML = '<span class="spinner"></span>正在生成海报...';
+        var btn = document.getElementById('generateBtn');
+        btn.disabled = true;
+        btn.innerHTML = '生成中...';
+
+        // Use setTimeout to let the UI update before heavy canvas work
+        setTimeout(function() {
+            try {
+                renderPoster(nameVal, lifespan, quotes, styleVal);
+                progressEl.style.display = 'none';
+                btn.disabled = false;
+                btn.innerHTML = '生成海报';
+                document.getElementById('canvasPreview').style.display = 'block';
+                document.getElementById('canvasPreview').scrollIntoView({behavior:'smooth', block:'center'});
+            } catch(e) {
+                progressEl.style.display = 'none';
+                btn.disabled = false;
+                btn.innerHTML = '生成海报';
+                console.error(e);
+                showToast('生成失败，请重试');
+            }
+        }, 100);
+    }
+
+    function renderPoster(nameVal, lifespan, quotes, styleVal) {
         var canvas = document.getElementById('posterCanvas');
         var ctx = canvas.getContext('2d');
+        var W = 800, H = 1132; // A3-ish ratio
 
-        // Target poster dimensions (portrait, similar to the existing posters)
-        var W = 800, H = 1000;
         canvas.width = W;
         canvas.height = H;
 
-        // Draw dark gradient background
-        var bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-        bgGrad.addColorStop(0, '#1a1a2e');
-        bgGrad.addColorStop(0.5, '#16213e');
-        bgGrad.addColorStop(1, '#0f3460');
+        // Dark background with subtle vignette
+        var bgGrad = ctx.createRadialGradient(W/2, H*0.4, 100, W/2, H*0.4, W*0.8);
+        bgGrad.addColorStop(0, '#2d2d3f');
+        bgGrad.addColorStop(1, '#0d0d18');
         ctx.fillStyle = bgGrad;
         ctx.fillRect(0, 0, W, H);
 
-        // Draw the uploaded photo in the center area
+        // Subtle texture lines
+        ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+        ctx.lineWidth = 1;
+        for (var y = 0; y < H; y += 40) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        }
+
+        // Draw photo - top portion
         var imgW = uploadedImage.width;
         var imgH = uploadedImage.height;
-        var targetW = W * 0.75;
-        var targetH = H * 0.55;
+        var targetW = W * 0.72;
+        var targetH = H * 0.42;
         var scale = Math.min(targetW / imgW, targetH / imgH);
         var dw = imgW * scale, dh = imgH * scale;
-        var dx = (W - dw) / 2, dy = 80;
+        var dx = (W - dw) / 2, dy = 50;
 
-        // Photo shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.5)';
-        ctx.shadowBlur = 40;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 20;
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(dx - 6, dy - 6, dw + 12, dh + 12);
+        // Photo with slight border
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur = 50;
+        ctx.shadowOffsetY = 25;
+        ctx.fillStyle = '#333';
+        ctx.fillRect(dx - 4, dy - 4, dw + 8, dh + 8);
         ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
         ctx.shadowOffsetY = 0;
 
-        // Draw image
+        // Border
+        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(dx - 4, dy - 4, dw + 8, dh + 8);
+
         ctx.drawImage(uploadedImage, dx, dy, dw, dh);
 
-        // Bottom quote area
-        var quoteY = dy + dh + 60;
+        // Name and lifespan - below photo
+        var nameY = dy + dh + 60;
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 36px "PingFang SC", "Microsoft YaHei", sans-serif';
+        ctx.font = 'bold 44px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(nameVal, W/2, nameY);
+
+        if (lifespan) {
+            ctx.font = '20px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.55)';
+            ctx.fillText(lifespan, W/2, nameY + 32);
+        }
+
+        // Decorative divider
+        var dividerY = lifespan ? nameY + 55 : nameY + 35;
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(W/2 - 80, dividerY);
+        ctx.lineTo(W/2 + 80, dividerY);
+        ctx.stroke();
+
+        // Small diamond at center of divider
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.beginPath();
+        ctx.moveTo(W/2, dividerY - 4);
+        ctx.lineTo(W/2 + 4, dividerY);
+        ctx.lineTo(W/2, dividerY + 4);
+        ctx.lineTo(W/2 - 4, dividerY);
+        ctx.fill();
+
+        // Quotes
+        var quoteStartY = dividerY + 45;
+        ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'center';
 
-        // Wrap long quotes
-        var words = quote.split('');
-        var lines = [];
-        var line = '';
-        var maxWidth = W - 100;
-        for (var i = 0; i < words.length; i++) {
-            var test = line + words[i];
-            if (ctx.measureText(test).width > maxWidth && line.length > 0) {
-                lines.push(line);
-                line = words[i];
-            } else { line = test; }
-        }
-        if (line) lines.push(line);
+        quotes.forEach(function(q, qi) {
+            var fontSize = quotes.length === 1 ? 32 : (quotes.length === 2 ? 28 : 24);
+            ctx.font = 'normal ' + fontSize + 'px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", serif';
+            ctx.fillStyle = '#ffffff';
 
-        lines.forEach(function(l, i) {
-            ctx.fillText(l, W/2, quoteY + i * 50);
+            // Word wrap for each quote
+            var words = q.split('');
+            var lines = [];
+            var line = '';
+            var maxW = W - 120;
+            for (var wi = 0; wi < words.length; wi++) {
+                var test = line + words[wi];
+                if (ctx.measureText(test).width > maxW && line.length > 0) {
+                    lines.push(line);
+                    line = words[wi];
+                } else { line = test; }
+            }
+            if (line) lines.push(line);
+
+            var lineHeight = fontSize + 8;
+            var blockStartY = quoteStartY;
+            // Calculate block height to center multiple quotes vertically
+            if (qi > 0) {
+                // Estimate previous block height
+                var prevQ = quotes[qi - 1];
+                var prevLines = 1;
+                var prevW = '';
+                for (var pw = 0; pw < prevQ.length; pw++) {
+                    var pt = prevW + prevQ[pw];
+                    ctx.font = 'normal ' + (quotes.length === 1 ? 32 : (quotes.length === 2 ? 28 : 24)) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+                    if (ctx.measureText(pt).width > maxW && prevW.length > 0) { prevLines++; prevW = prevQ[pw]; }
+                    else { prevW = pt; }
+                }
+                quoteStartY += prevLines * (fontSize + 8) + 20;
+            }
+
+            ctx.font = 'normal ' + fontSize + 'px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif';
+            lines.forEach(function(l, li) {
+                ctx.fillText(l, W/2, quoteStartY + li * lineHeight);
+            });
+
+            if (qi < quotes.length - 1) {
+                quoteStartY += lines.length * lineHeight + 20;
+            }
         });
 
+        // Calculate where quotes end for style tag placement
+        var totalQuoteLines = 0;
+        quotes.forEach(function(q) {
+            var fs = quotes.length === 1 ? 32 : (quotes.length === 2 ? 28 : 24);
+            var w = '', lns = 1, mw = W - 120;
+            ctx.font = 'normal ' + fs + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
+            for (var ci = 0; ci < q.length; ci++) {
+                var t = w + q[ci];
+                if (ctx.measureText(t).width > mw && w.length > 0) { lns++; w = q[ci]; }
+                else { w = t; }
+            }
+            totalQuoteLines += lns;
+        });
+
+        var finalQuoteY = dividerY + 45 + totalQuoteLines * 36 + (quotes.length - 1) * 20;
+
         // Style tag
-        var tagY = quoteY + lines.length * 50 + 40;
-        ctx.font = '16px "PingFang SC", "Microsoft YaHei", sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.5)';
-        ctx.fillText('风格: ' + style, W/2, tagY);
+        var tagY = Math.max(finalQuoteY + 50, H - 130);
+        ctx.font = '15px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.35)';
+        ctx.fillText('风格: ' + styleVal, W/2, tagY);
 
         // Watermark
-        ctx.font = '13px "PingFang SC", "Microsoft YaHei", sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.25)';
-        ctx.fillText('pengcongbest.github.io/p', W/2, H - 30);
+        ctx.font = '12px "PingFang SC", "Microsoft YaHei", sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.fillText('pengcongbest.github.io/p', W/2, H - 25);
 
-        // Show preview
-        document.getElementById('canvasPreview').style.display = 'block';
-        document.getElementById('canvasPreview').scrollIntoView({behavior:'smooth'});
-
-        // Store data URL for download
+        // Store
         generatedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
     }
 
     function downloadGenerated() {
         if (!generatedDataUrl) { showToast('请先生成海报'); return; }
+        var nameVal = document.getElementById('nameInput').value.trim() || '人物';
         var a = document.createElement('a');
         a.href = generatedDataUrl;
-        a.download = '我的海报.jpg';
+        a.download = nameVal + '说你一定行.jpg';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -530,24 +689,24 @@
     var GALLERY_KEY = 'poster_gallery_items';
 
     function getGallery() {
-        try {
-            return JSON.parse(localStorage.getItem(GALLERY_KEY)) || [];
-        } catch(e) { return []; }
+        try { return JSON.parse(localStorage.getItem(GALLERY_KEY)) || []; }
+        catch(e) { return []; }
     }
 
     function saveToGallery() {
         if (!generatedDataUrl) { showToast('请先生成海报'); return; }
-        var quote = document.getElementById('quoteInput').value.trim();
-        var style = document.getElementById('styleInput').value.trim() || '经典励志';
+        var nameVal = document.getElementById('nameInput').value.trim();
+        var quote1 = document.getElementById('quote1Input').value.trim();
+        var styleVal = document.getElementById('styleInput').value.trim() || '经典励志';
         var gallery = getGallery();
         gallery.unshift({
             id: Date.now(),
-            quote: quote,
-            style: style,
+            name: nameVal,
+            quote: quote1,
+            style: styleVal,
             image: generatedDataUrl,
             time: new Date().toLocaleString('zh-CN')
         });
-        // Keep max 50 items
         if (gallery.length > 50) gallery = gallery.slice(0, 50);
         try {
             localStorage.setItem(GALLERY_KEY, JSON.stringify(gallery));
@@ -562,7 +721,6 @@
         var grid = document.getElementById('galleryGrid');
         var empty = document.getElementById('galleryEmpty');
         grid.innerHTML = '';
-
         if (gallery.length === 0) {
             empty.style.display = 'block';
         } else {
@@ -571,8 +729,9 @@
                 var div = document.createElement('div');
                 div.className = 'gallery-item';
                 div.innerHTML =
-                    '<img src="' + item.image + '" alt="海报" loading="lazy">' +
-                    '<div class="info"><strong>' + escapeHTML(item.quote.substring(0,30)) + '</strong><br>' +
+                    '<img src="' + item.image + '" alt="' + escapeHTML(item.name || '') + ' 海报" loading="lazy">' +
+                    '<div class="info"><strong>' + escapeHTML(item.name || '') + '</strong><br>' +
+                    escapeHTML(item.quote.substring(0,30)) + '<br>' +
                     item.style + ' · ' + item.time + '</div>';
                 grid.appendChild(div);
             });
@@ -596,10 +755,14 @@
         return d.innerHTML;
     }
 
-    // Hook up
+    // Hook up buttons
     document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
     document.getElementById('wechatShareBtn').addEventListener('click', wechatShare);
     document.getElementById('galleryBtn').addEventListener('click', openGallery);
+    document.getElementById('generateBtn').addEventListener('click', generatePoster);
+    document.getElementById('downloadGeneratedBtn').addEventListener('click', downloadGenerated);
+    document.getElementById('saveToGalleryBtn').addEventListener('click', saveToGallery);
+    document.getElementById('modalCloseBtn').addEventListener('click', closeGallery);
 
     })();
     </script>
