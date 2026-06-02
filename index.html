@@ -15,194 +15,88 @@
     <meta name="twitter:description" content="乔布斯、段永平、查理·芒格、凯文·凯利、黄峥、张一鸣，六位企业家的励志海报，免费下载。">
     <meta name="twitter:image" content="https://aka.doubaocdn.com/s/o3Zt1wdB7O?alice_filename=%25E4%25B9%2594%25E5%25B8%2583%25E6%2596%25AF.jpg">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌟</text></svg>">
-
     <style>
         :root {
-            --bg: #f5f5f7; --bg-card: #ffffff; --text: #1d1d1f;
-            --text-secondary: #86868b; --text-tertiary: #6e6e73;
-            --accent: #0071e3; --accent-hover: #0077ed;
-            --wechat: #07C160; --wechat-hover: #06AD56;
-            --gallery: #ff6b35; --gallery-hover: #e55a2b;
-            --shadow: 0 4px 20px rgba(0,0,0,0.08);
-            --shadow-hover: 0 8px 40px rgba(0,0,0,0.12);
-            --border: rgba(0,0,0,0.06);
+            --bg:#f5f5f7;--bg-card:#fff;--text:#1d1d1f;--text2:#86868b;--text3:#6e6e73;
+            --accent:#0071e3;--accent-h:#0077ed;--wechat:#07C160;--wechat-h:#06AD56;
+            --gallery:#ff6b35;--gallery-h:#e55a2b;
+            --shadow:0 4px 20px rgba(0,0,0,.08);--shadow-h:0 8px 40px rgba(0,0,0,.12);--border:rgba(0,0,0,.06);
         }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #1d1d1f; --bg-card: #2d2d2f; --text: #f5f5f7;
-                --text-secondary: #a1a1a6; --text-tertiary: #86868b;
-                --accent: #2997ff; --accent-hover: #40a9ff;
-                --shadow: 0 4px 20px rgba(0,0,0,0.3);
-                --shadow-hover: 0 8px 40px rgba(0,0,0,0.5);
-                --border: rgba(255,255,255,0.08);
-            }
-        }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        html { scroll-behavior:smooth; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg); color: var(--text);
-            line-height: 1.8; transition: background-color 0.3s, color 0.3s;
-        }
-        .container { max-width:900px; margin:0 auto; padding:40px 20px; }
-
-        .header { text-align:center; margin-bottom:50px; }
-        .header h1 { font-size:40px; font-weight:700; margin-bottom:28px; letter-spacing:2px; }
-        .header .manifesto { font-size:17px; color:var(--text-secondary); max-width:680px; margin:0 auto; white-space:pre-line; line-height:2; }
-
-        .poster-list { display:flex; flex-direction:column; gap:50px; }
-        .poster-item { display:flex; flex-direction:column; align-items:center; gap:16px; }
-        .poster-img-wrapper {
-            width:100%; max-width:800px; border-radius:16px; overflow:hidden;
-            box-shadow:var(--shadow); background:var(--bg-card); transition:box-shadow 0.3s;
-        }
-        .poster-img-wrapper:hover { box-shadow:var(--shadow-hover); }
-        .poster-img { width:100%; display:block; transition:transform 0.3s; }
-        .poster-img-wrapper:hover .poster-img { transform:scale(1.02); }
-
-        .btn {
-            display:inline-flex; align-items:center; gap:6px;
-            border:none; cursor:pointer; text-decoration:none;
-            border-radius:980px; padding:12px 24px; font-size:16px; font-weight:500;
-            font-family:inherit; transition:background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-        }
-        .btn:active { transform:scale(0.97); }
-        .btn:disabled { opacity:0.6; cursor:not-allowed; pointer-events:none; }
-        .btn-download {
-            background-color:var(--bg-card); color:var(--accent);
-            border:1.5px solid var(--border); font-size:15px; padding:10px 20px;
-        }
-        .btn-download:hover { border-color:var(--accent); background-color:var(--accent); color:#fff; }
-
-        .action-bar { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:60px; margin-bottom:40px; }
-        .btn-primary { background-color:var(--accent); color:#fff; }
-        .btn-primary:hover { background-color:var(--accent-hover); box-shadow:0 4px 16px rgba(0,113,227,0.3); }
-        .btn-wechat { background-color:var(--wechat); color:#fff; }
-        .btn-wechat:hover { background-color:var(--wechat-hover); box-shadow:0 4px 16px rgba(7,193,96,0.3); }
-        .btn-gallery { background-color:var(--gallery); color:#fff; }
-        .btn-gallery:hover { background-color:var(--gallery-hover); box-shadow:0 4px 16px rgba(255,107,53,0.3); }
-
-        .generator-section {
-            margin-top:60px; margin-bottom:40px;
-            background:var(--bg-card); border-radius:20px;
-            padding:40px 32px; box-shadow:var(--shadow);
-        }
-        .generator-section h2 { text-align:center; font-size:24px; font-weight:700; margin-bottom:8px; color:var(--text); }
-        .generator-section .subtitle { text-align:center; font-size:15px; color:var(--text-secondary); margin-bottom:32px; }
-        .generator-form { display:flex; flex-direction:column; gap:20px; max-width:500px; margin:0 auto; }
-        .generator-form label { font-size:14px; font-weight:600; color:var(--text-secondary); }
-        .generator-form input[type="file"] { display:none; }
-        .upload-area {
-            border:2px dashed var(--border); border-radius:12px;
-            padding:32px; text-align:center; cursor:pointer;
-            transition:border-color 0.2s, background-color 0.2s;
-        }
-        .upload-area:hover { border-color:var(--accent); background-color:rgba(0,113,227,0.03); }
-        .upload-area.has-image { border-color:var(--accent); padding:12px; }
-        .upload-area img { max-width:100%; max-height:200px; border-radius:8px; display:block; margin:0 auto; }
-        .upload-placeholder { color:var(--text-tertiary); font-size:15px; }
-        .upload-placeholder svg { display:block; margin:0 auto 8px; }
-        .auto-lookup-status { font-size:12px; color:var(--accent); margin-top:2px; min-height:18px; }
-
-        .generator-form input[type="text"],
-        .generator-form textarea {
-            width:100%; padding:12px 16px; border-radius:10px;
-            border:1.5px solid var(--border); background:var(--bg);
-            color:var(--text); font-size:16px; font-family:inherit;
-            transition:border-color 0.2s; outline:none;
-        }
-        .generator-form input[type="text"]:focus,
-        .generator-form textarea:focus { border-color:var(--accent); }
-        .generator-form textarea { min-height:80px; resize:vertical; }
-
-        .generate-btn-wrap { text-align:center; }
-        .canvas-preview { text-align:center; margin-top:24px; display:none; }
-        .canvas-preview canvas { max-width:100%; border-radius:12px; box-shadow:var(--shadow); }
-        .canvas-preview .preview-actions { margin-top:16px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
-        .generate-progress { margin-top:12px; text-align:center; }
-        .generate-progress .spinner {
-            display:inline-block; width:18px; height:18px;
-            border:2px solid var(--border); border-top-color:var(--accent);
-            border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:6px;
-        }
-        @keyframes spin { to { transform:rotate(360deg); } }
-
-        .ai-config { margin-top:16px; padding:16px; border-radius:12px; background:var(--bg); font-size:14px; }
-        .ai-config summary { cursor:pointer; color:var(--accent); font-weight:600; }
-        .ai-config input { margin-top:8px; }
-
-        .modal-overlay {
-            position:fixed; top:0; left:0; width:100%; height:100%;
-            background:rgba(0,0,0,0.5); z-index:3000;
-            display:flex; align-items:center; justify-content:center;
-            opacity:0; pointer-events:none; transition:opacity 0.3s;
-        }
-        .modal-overlay.open { opacity:1; pointer-events:auto; }
-        .modal {
-            background:var(--bg-card); border-radius:20px;
-            width:90%; max-width:800px; max-height:85vh;
-            overflow-y:auto; padding:32px; position:relative;
-            box-shadow:0 20px 60px rgba(0,0,0,0.3);
-        }
-        .modal-close {
-            position:absolute; top:16px; right:16px;
-            width:32px; height:32px; border-radius:50%;
-            border:none; background:var(--border); cursor:pointer;
-            font-size:18px; display:flex; align-items:center; justify-content:center;
-            color:var(--text-secondary); transition:background 0.2s;
-        }
-        .modal-close:hover { background:var(--text-tertiary); color:#fff; }
-        .modal h2 { text-align:center; font-size:22px; margin-bottom:24px; }
-        .gallery-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; }
-        .gallery-item { border-radius:12px; overflow:hidden; box-shadow:var(--shadow); background:var(--bg); }
-        .gallery-item img { width:100%; display:block; }
-        .gallery-item .info { padding:10px 12px; font-size:13px; color:var(--text-secondary); }
-        .gallery-item .info strong { color:var(--text); }
-        .gallery-empty { text-align:center; color:var(--text-tertiary); padding:40px; }
-
-        footer { text-align:center; padding:20px; color:var(--text-tertiary); font-size:14px; }
-        footer .signature { font-size:15px; color:var(--text-secondary); }
-
-        .back-to-top {
-            position:fixed; bottom:30px; right:30px; width:44px; height:44px;
-            border-radius:50%; background-color:var(--bg-card); border:1px solid var(--border);
-            box-shadow:var(--shadow); cursor:pointer;
-            display:flex; align-items:center; justify-content:center;
-            color:var(--text-secondary); opacity:0; pointer-events:none;
-            transition:opacity 0.3s, transform 0.2s; z-index:1000;
-        }
-        .back-to-top.visible { opacity:1; pointer-events:auto; }
-        .back-to-top:hover { transform:translateY(-2px); color:var(--accent); }
-
-        .toast {
-            position:fixed; bottom:40px; left:50%;
-            transform:translateX(-50%) translateY(100px);
-            background:#1d1d1f; color:#fff; padding:12px 24px;
-            border-radius:980px; font-size:15px; z-index:4000;
-            pointer-events:none;
-            transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
-        }
-        .toast.show { transform:translateX(-50%) translateY(0); }
-        @media (prefers-color-scheme:dark) { .toast { background:#f5f5f7; color:#1d1d1f; } }
-
-        @media (max-width:768px) {
-            .header h1 { font-size:28px; letter-spacing:1px; }
-            .header .manifesto { font-size:15px; line-height:1.9; }
-            .poster-list { gap:36px; }
-            .poster-item { gap:12px; }
-            .action-bar { margin-top:40px; }
-            .generator-section { padding:24px 16px; }
-            .back-to-top { bottom:20px; right:16px; width:40px; height:40px; }
-            .btn { padding:10px 20px; font-size:15px; }
-            .gallery-grid { grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); }
-        }
+        @media(prefers-color-scheme:dark){:root{--bg:#1d1d1f;--bg-card:#2d2d2f;--text:#f5f5f7;--text2:#a1a1a6;--text3:#86868b;--accent:#2997ff;--accent-h:#40a9ff;--shadow:0 4px 20px rgba(0,0,0,.3);--shadow-h:0 8px 40px rgba(0,0,0,.5);--border:rgba(255,255,255,.08);}}
+        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+        body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.8;transition:background .3s,color .3s}
+        .container{max-width:900px;margin:0 auto;padding:40px 20px}
+        .header{text-align:center;margin-bottom:50px}
+        .header h1{font-size:40px;font-weight:700;margin-bottom:28px;letter-spacing:2px}
+        .header .m{font-size:17px;color:var(--text2);max-width:680px;margin:0 auto;white-space:pre-line;line-height:2}
+        .poster-list{display:flex;flex-direction:column;gap:50px}
+        .poster-item{display:flex;flex-direction:column;align-items:center;gap:16px}
+        .poster-iw{width:100%;max-width:800px;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:var(--bg-card);transition:box-shadow .3s}
+        .poster-iw:hover{box-shadow:var(--shadow-h)}
+        .poster-img{width:100%;display:block;transition:transform .3s}
+        .poster-iw:hover .poster-img{transform:scale(1.02)}
+        .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;text-decoration:none;border-radius:980px;padding:12px 24px;font-size:16px;font-weight:500;font-family:inherit;transition:background .2s,transform .1s,box-shadow .2s}
+        .btn:active{transform:scale(.97)}.btn:disabled{opacity:.6;cursor:not-allowed;pointer-events:none}
+        .btn-dl{background:var(--bg-card);color:var(--accent);border:1.5px solid var(--border);font-size:15px;padding:10px 20px}
+        .btn-dl:hover{border-color:var(--accent);background:var(--accent);color:#fff}
+        .action-bar{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:60px;margin-bottom:40px}
+        .btn-p{background:var(--accent);color:#fff}.btn-p:hover{background:var(--accent-h);box-shadow:0 4px 16px rgba(0,113,227,.3)}
+        .btn-w{background:var(--wechat);color:#fff}.btn-w:hover{background:var(--wechat-h);box-shadow:0 4px 16px rgba(7,193,96,.3)}
+        .btn-g{background:var(--gallery);color:#fff}.btn-g:hover{background:var(--gallery-h);box-shadow:0 4px 16px rgba(255,107,53,.3)}
+        .gen-sec{margin-top:60px;margin-bottom:40px;background:var(--bg-card);border-radius:20px;padding:40px 32px;box-shadow:var(--shadow)}
+        .gen-sec h2{text-align:center;font-size:24px;font-weight:700;margin-bottom:8px}
+        .gen-sec .sub{text-align:center;font-size:15px;color:var(--text2);margin-bottom:32px}
+        .gen-form{display:flex;flex-direction:column;gap:20px;max-width:500px;margin:0 auto}
+        .gen-form label{font-size:14px;font-weight:600;color:var(--text2)}
+        .gen-form input[type=file]{display:none}
+        .upload-area{border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s}
+        .upload-area:hover{border-color:var(--accent);background:rgba(0,113,227,.03)}
+        .upload-area.has-img{border-color:var(--accent);padding:12px}
+        .upload-area img{max-width:100%;max-height:200px;border-radius:8px;display:block;margin:0 auto}
+        .upload-ph{color:var(--text3);font-size:15px}.upload-ph svg{display:block;margin:0 auto 8px}
+        .lookup-status{font-size:12px;color:var(--accent);margin-top:2px;min-height:18px}
+        .gen-form input[type=text],.gen-form textarea{width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:16px;font-family:inherit;transition:border-color .2s;outline:none}
+        .gen-form input[type=text]:focus,.gen-form textarea:focus{border-color:var(--accent)}
+        .gen-form textarea{min-height:80px;resize:vertical}
+        .gen-btn-wrap{text-align:center}
+        .canvas-preview{text-align:center;margin-top:24px;display:none}
+        .canvas-preview canvas{max-width:100%;border-radius:12px;box-shadow:var(--shadow)}
+        .canvas-preview .pv-actions{margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+        .gen-progress{margin-top:12px;text-align:center}
+        .gen-progress .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .ai-badge{display:inline-block;background:var(--accent);color:#fff;font-size:11px;padding:2px 8px;border-radius:8px;margin-left:4px;vertical-align:middle}
+        .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:3000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+        .modal-overlay.open{opacity:1;pointer-events:auto}
+        .modal{background:var(--bg-card);border-radius:20px;width:90%;max-width:800px;max-height:85vh;overflow-y:auto;padding:32px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+        .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;background:var(--border);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:background .2s}
+        .modal-close:hover{background:var(--text3);color:#fff}
+        .modal h2{text-align:center;font-size:22px;margin-bottom:24px}
+        .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+        .gallery-item{border-radius:12px;overflow:hidden;box-shadow:var(--shadow);background:var(--bg)}
+        .gallery-item img{width:100%;display:block}
+        .gallery-item .info{padding:10px 12px;font-size:13px;color:var(--text2)}
+        .gallery-item .info strong{color:var(--text)}
+        .gallery-empty{text-align:center;color:var(--text3);padding:40px}
+        .admin-link{text-align:center;margin-top:16px}
+        .admin-link a{color:var(--text3);font-size:12px;text-decoration:none}
+        .admin-link a:hover{color:var(--accent)}
+        footer{text-align:center;padding:20px;color:var(--text3);font-size:14px}
+        footer .sig{font-size:15px;color:var(--text2)}
+        .back-to-top{position:fixed;bottom:30px;right:30px;width:44px;height:44px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);opacity:0;pointer-events:none;transition:opacity .3s,transform .2s;z-index:1000}
+        .back-to-top.visible{opacity:1;pointer-events:auto}
+        .back-to-top:hover{transform:translateY(-2px);color:var(--accent)}
+        .toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(100px);background:#1d1d1f;color:#fff;padding:12px 24px;border-radius:980px;font-size:15px;z-index:4000;pointer-events:none;transition:transform .4s cubic-bezier(.175,.885,.32,1.275)}
+        .toast.show{transform:translateX(-50%) translateY(0)}
+        @media(prefers-color-scheme:dark){.toast{background:#f5f5f7;color:#1d1d1f}}
+        @media(max-width:768px){.header h1{font-size:28px;letter-spacing:1px}.header .m{font-size:15px;line-height:1.9}.poster-list{gap:36px}.poster-item{gap:12px}.action-bar{margin-top:40px}.gen-sec{padding:24px 16px}.back-to-top{bottom:20px;right:16px;width:40px;height:40px}.btn{padding:10px 20px;font-size:15px}.gallery-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}}
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>致梦想改变世界的人</h1>
-            <p class="manifesto">生命转瞬即逝，没时间在乎他人的想法。
+<div class="container">
+    <div class="header">
+        <h1>致梦想改变世界的人</h1>
+        <p class="m">生命转瞬即逝，没时间在乎他人的想法。
 哪怕多活一天，也可以创造精彩的旅程。
 如果你觉得想改变世界的人都是疯子，
 看看身边，一切的一切，
@@ -212,591 +106,240 @@
 不会写代码、不会用PS、不懂AI。
 他现在是nobody，
 但他希望做出点好东西向父母和世界表达感谢。</p>
-        </div>
+    </div>
 
-        <div class="poster-list" id="posterList"></div>
+    <div class="poster-list" id="posterList"></div>
 
-        <div class="action-bar">
-            <button class="btn btn-primary" id="downloadAllBtn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                下载全部海报 (ZIP)
-            </button>
-            <button class="btn btn-wechat" id="wechatShareBtn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18zM13.5 10.602c-2.596 0-4.688 2.09-4.688 4.652 0 2.562 2.092 4.653 4.688 4.653.466 0 .926-.068 1.362-.196l1.276.744a.224.224 0 00.112.036.197.197 0 00.194-.197c0-.048-.012-.095-.032-.142l-.263-.992a.392.392 0 01.143-.442C18.154 17.508 19.2 15.991 19.2 15.254c0-2.562-2.092-4.652-4.688-4.652h-.012.012zm-2.344 2.326a.78.78 0 01.781.787.78.78 0 01-.781.785.78.78 0 01-.781-.785c0-.434.347-.787.781-.787zm4.688 0a.78.78 0 01.781.787.78.78 0 01-.781.785.78.78 0 01-.781-.785c0-.434.347-.787.781-.787z"/></svg>
-                微信分享
-            </button>
-            <button class="btn btn-gallery" id="galleryBtn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                看看朋友们的海报
-            </button>
-        </div>
+    <div class="action-bar">
+        <button class="btn btn-p" id="downloadAllBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            下载全部海报 (ZIP)
+        </button>
+        <button class="btn btn-w" id="wechatShareBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18zM13.5 10.602c-2.596 0-4.688 2.09-4.688 4.652 0 2.562 2.092 4.653 4.688 4.653.466 0 .926-.068 1.362-.196l1.276.744a.224.224 0 00.112.036.197.197 0 00.194-.197c0-.048-.012-.095-.032-.142l-.263-.992a.392.392 0 01.143-.442C18.154 17.508 19.2 15.991 19.2 15.254c0-2.562-2.092-4.652-4.688-4.652h-.012.012zm-2.344 2.326a.78.78 0 01.781.787.78.78 0 01-.781.785.78.78 0 01-.781-.785c0-.434.347-.787.781-.787zm4.688 0a.78.78 0 01.781.787.78.78 0 01-.781.785.78.78 0 01-.781-.785c0-.434.347-.787.781-.787z"/></svg>
+            微信分享
+        </button>
+        <button class="btn btn-g" id="galleryBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            看看朋友们的海报
+        </button>
+    </div>
 
-        <div class="generator-section" id="generator">
-            <h2>生成自己喜爱的海报</h2>
-            <p class="subtitle">上传人物照片，写下你最爱的语录，一键生成专属海报</p>
-            <div class="generator-form">
-                <div>
-                    <label>人物照片</label>
-                    <div class="upload-area" id="uploadArea">
-                        <div class="upload-placeholder" id="uploadPlaceholder">
-                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>点击上传人物图片
-                        </div>
-                        <img id="uploadPreview" style="display:none" alt="预览">
+    <div class="gen-sec" id="generator">
+        <h2>生成自己喜爱的海报<span class="ai-badge" id="aiBadge" style="display:none">AI 已启用</span></h2>
+        <p class="sub">填写人物信息，AI 帮你创作独一无二的励志海报</p>
+        <div class="gen-form">
+            <div>
+                <label>人物照片 <span style="font-weight:400;color:var(--text3)">（AI 模式下可跳过）</span></label>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-ph" id="uploadPlaceholder">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>点击上传人物图片（可选）
                     </div>
-                    <input type="file" id="photoInput" accept="image/*">
+                    <img id="uploadPreview" style="display:none" alt="预览">
                 </div>
-                <div>
-                    <label for="nameInput">人物姓名 *</label>
-                    <input type="text" id="nameInput" placeholder="例如：史蒂夫·乔布斯" maxlength="50">
-                    <div class="auto-lookup-status" id="lookupStatus"></div>
-                </div>
-                <div>
-                    <label for="birthInput">生卒年份</label>
-                    <input type="text" id="birthInput" placeholder="自动搜索中，也可手动填写（如 1955-2011）" maxlength="20">
-                </div>
-                <div>
-                    <label for="quote1Input">语录第一句 *</label>
-                    <input type="text" id="quote1Input" placeholder="例如：Stay hungry, stay foolish." maxlength="120">
-                </div>
-                <div>
-                    <label for="quote2Input">语录第二句</label>
-                    <input type="text" id="quote2Input" placeholder="选填，不超过三句" maxlength="120">
-                </div>
-                <div>
-                    <label for="quote3Input">语录第三句</label>
-                    <input type="text" id="quote3Input" placeholder="选填" maxlength="120">
-                </div>
-                <div>
-                    <label for="styleInput">海报风格描述</label>
-                    <textarea id="styleInput" placeholder="例如：极简黑白、复古暖调、冷峻科技、自然清新、暗黑高级……"></textarea>
-                </div>
-                <div class="generate-btn-wrap">
-                    <button class="btn btn-primary" id="generateBtn">生成海报</button>
-                </div>
-                <div class="generate-progress" id="generateProgress" style="display:none;"></div>
-                <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--text-tertiary);display:none;" id="usageInfo">
-                    今日 AI 已生成: <span id="apiUsageCount">0</span> / <span id="apiLimitDisplay">20</span> 次
-                </div>
+                <input type="file" id="photoInput" accept="image/*">
             </div>
-            <div class="canvas-preview" id="canvasPreview">
-                <canvas id="posterCanvas"></canvas>
-                <div class="preview-actions">
-                    <button class="btn btn-primary" id="downloadGeneratedBtn">下载我的海报</button>
-                </div>
+            <div>
+                <label for="nameInput">人物姓名 *</label>
+                <input type="text" id="nameInput" placeholder="例如：史蒂夫·乔布斯" maxlength="50">
+                <div class="lookup-status" id="lookupStatus"></div>
             </div>
+            <div>
+                <label for="birthInput">生卒年份</label>
+                <input type="text" id="birthInput" placeholder="自动搜索中，也可手动填写（如 1955-2011）" maxlength="20">
+            </div>
+            <div>
+                <label for="quote1Input">语录第一句 *</label>
+                <input type="text" id="quote1Input" placeholder="例如：Stay hungry, stay foolish." maxlength="120">
+            </div>
+            <div>
+                <label for="quote2Input">语录第二句</label>
+                <input type="text" id="quote2Input" placeholder="选填，不超过三句" maxlength="120">
+            </div>
+            <div>
+                <label for="quote3Input">语录第三句</label>
+                <input type="text" id="quote3Input" placeholder="选填" maxlength="120">
+            </div>
+            <div>
+                <label for="styleInput">海报风格描述</label>
+                <textarea id="styleInput" placeholder="例如：极简黑白、复古暖调、冷峻科技、自然清新、暗黑高级……"></textarea>
+            </div>
+            <div class="gen-btn-wrap">
+                <button class="btn btn-p" id="generateBtn">生成海报</button>
+            </div>
+            <div class="gen-progress" id="generateProgress" style="display:none;"></div>
         </div>
-
-        <footer>
-            <p class="signature" id="adminTrigger" style="cursor:default;" title="">彭聪 2026年5月于中国武汉</p>
-        </footer>
-
-        <div class="modal-overlay" id="adminModal">
-            <div class="modal">
-                <button class="modal-close" id="adminCloseBtn">&times;</button>
-                <h2>管理员设置</h2>
-                <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">
-                    在这里设置 AI 生图 API Key，所有访客生成海报时自动调用 AI。<br>
-                    去 <a href="https://siliconflow.cn" target="_blank">siliconflow.cn</a> 注册，在 API 管理页面获取 Key。
-                </p>
-                <label for="adminApiKey">SiliconFlow API Key</label>
-                <input type="password" id="adminApiKey" placeholder="sk-..." style="width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);font-size:16px;font-family:inherit;margin:8px 0 16px;">
-                <label for="adminApiLimit">每日 AI 生成上限</label>
-                <input type="number" id="adminApiLimit" value="20" min="1" max="500" style="width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);font-size:16px;margin:8px 0 16px;">
-                <div id="adminStatus" style="font-size:13px;color:var(--accent);margin-bottom:12px;"></div>
-                <button class="btn btn-primary" id="adminSaveBtn">保存设置</button>
+        <div class="canvas-preview" id="canvasPreview">
+            <canvas id="posterCanvas"></canvas>
+            <div class="pv-actions">
+                <button class="btn btn-p" id="downloadGeneratedBtn">下载我的海报</button>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="galleryModal">
-        <div class="modal">
-            <button class="modal-close" id="modalCloseBtn">&times;</button>
-            <h2>朋友们的海报</h2>
-            <div class="gallery-grid" id="galleryGrid"></div>
-            <div class="gallery-empty" id="galleryEmpty" style="display:none">还没有人发布海报，快来制作第一张吧！</div>
-        </div>
+    <footer>
+        <p class="sig">彭聪 2026年5月于中国武汉</p>
+    </footer>
+</div>
+
+<div class="modal-overlay" id="galleryModal">
+    <div class="modal">
+        <button class="modal-close" id="modalCloseBtn">&times;</button>
+        <h2>朋友们的海报</h2>
+        <div class="gallery-grid" id="galleryGrid"></div>
+        <div class="gallery-empty" id="galleryEmpty" style="display:none">还没有人发布海报，快来制作第一张吧！</div>
     </div>
+</div>
 
-    <button class="back-to-top" id="backToTop" title="回到顶部">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
-    </button>
-    <div class="toast" id="toast"></div>
+<div class="modal-overlay" id="adminModal">
+    <div class="modal">
+        <button class="modal-close" id="adminCloseBtn">&times;</button>
+        <h2>AI 设置</h2>
+        <p style="font-size:14px;color:var(--text2);margin-bottom:16px;">配置 SiliconFlow API Key 后，AI 将自动生成完整海报（无需上传照片）。<br>去 <a href="https://cloud.siliconflow.cn" target="_blank">cloud.siliconflow.cn</a> 获取 Key。</p>
+        <label>API Key</label>
+        <input type="password" id="adminApiKey" placeholder="sk-..." style="width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);font-size:16px;font-family:inherit;margin:8px 0 16px;">
+        <label>每日 AI 上限</label>
+        <input type="number" id="adminApiLimit" value="20" min="1" max="500" style="width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);font-size:16px;margin:8px 0 16px;">
+        <div id="adminStatus" style="font-size:13px;color:var(--accent);margin-bottom:12px;"></div>
+        <button class="btn btn-p" id="adminSaveBtn">保存设置</button>
+    </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<button class="back-to-top" id="backToTop" title="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<div class="toast" id="toast"></div>
 
-    <script>
-    (function() {
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+(function(){
+var posters=[{name:'史蒂夫·乔布斯',file:'史蒂夫·乔布斯_励志海报.jpg',dl:'史蒂夫·乔布斯说你一定行.jpg'},{name:'段永平',file:'段永平_励志海报.jpg',dl:'段永平说你一定行.jpg'},{name:'查理·芒格',file:'查理·芒格_励志海报.jpg',dl:'查理·芒格说你一定行.jpg'},{name:'凯文·凯利',file:'凯文·凯利_励志海报.jpg',dl:'凯文·凯利说你一定行.jpg'},{name:'黄峥',file:'黄峥_励志海报.jpg',dl:'黄峥说你一定行.jpg'},{name:'张一鸣',file:'张一鸣_励志海报.jpg',dl:'张一鸣说你一定行.jpg'}];
+var imgP='images/',genDU=null,uploadedImg=null;
 
-    var posters = [
-        { name: '史蒂夫·乔布斯', file: '史蒂夫·乔布斯_励志海报.jpg', download: '史蒂夫·乔布斯说你一定行.jpg' },
-        { name: '段永平',       file: '段永平_励志海报.jpg',     download: '段永平说你一定行.jpg' },
-        { name: '查理·芒格',     file: '查理·芒格_励志海报.jpg',   download: '查理·芒格说你一定行.jpg' },
-        { name: '凯文·凯利',     file: '凯文·凯利_励志海报.jpg',   download: '凯文·凯利说你一定行.jpg' },
-        { name: '黄峥',         file: '黄峥_励志海报.jpg',       download: '黄峥说你一定行.jpg' },
-        { name: '张一鸣',       file: '张一鸣_励志海报.jpg',     download: '张一鸣说你一定行.jpg' }
-    ];
-    var imgPath = 'images/';
-    var generatedDataUrl = null;
-    var AI_API_KEY = '', AI_DAILY_LIMIT = 20, hasAI = false;
+// Build poster list
+var pl=document.getElementById('posterList');
+posters.forEach(function(p){var d=document.createElement('div');d.className='poster-item';d.innerHTML='<div class="poster-iw"><img class="poster-img" src="'+imgP+p.file+'" alt="'+p.name+' 励志海报" loading="lazy"></div><a class="btn btn-dl" href="'+imgP+p.file+'" download="'+p.dl+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载海报</a>';pl.appendChild(d);});
 
-    var list = document.getElementById('posterList');
-    posters.forEach(function(p) {
-        var item = document.createElement('div'); item.className = 'poster-item';
-        item.innerHTML = '<div class="poster-img-wrapper"><img class="poster-img" src="'+imgPath+p.file+'" alt="'+p.name+' 励志海报" loading="lazy"></div><a class="btn btn-download" href="'+imgPath+p.file+'" download="'+p.download+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载海报</a>';
-        list.appendChild(item);
-    });
+var tt;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show');},2500);}
 
-    var toastTimer;
-    function showToast(msg) {
-        var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
-        clearTimeout(toastTimer); toastTimer = setTimeout(function(){t.classList.remove('show');},2500);
+function dlAll(){var b=document.getElementById('downloadAllBtn'),o=b.innerHTML;b.disabled=true;b.innerHTML='打包中...';if(typeof JSZip==='undefined'){toast('JSZip 加载失败');b.disabled=false;b.innerHTML=o;return;}var z=new JSZip(),f=z.folder('励志海报'),t=posters.length;var fts=posters.map(function(p,i){b.innerHTML='打包中 ('+(i+1)+'/'+t+')...';return fetch(imgP+p.file).then(function(r){return r.blob();}).then(function(bl){f.file(p.dl,bl);});});Promise.all(fts).then(function(){b.innerHTML='生成 ZIP...';return z.generateAsync({type:'blob'});}).then(function(zb){var u=URL.createObjectURL(zb),a=document.createElement('a');a.href=u;a.download='励志海报_全部.zip';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u);},1000);toast('ZIP 下载完成');}).catch(function(e){console.error(e);toast('打包失败');}).finally(function(){b.disabled=false;b.innerHTML=o;});}
+
+function wxShare(){var u=window.location.href;if(navigator.share){navigator.share({title:'致梦想改变世界的人 - 励志海报',text:'乔布斯、段永平、查理·芒格、凯文·凯利、黄峥、张一鸣，励志海报免费下载。',url:u}).catch(function(e){if(e.name!=='AbortError')cpLk(u);});}else{cpLk(u);}}
+function cpLk(u){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(function(){toast('链接已复制，请打开微信粘贴分享');}).catch(function(){fbCp(u);});}else{fbCp(u);}}
+function fbCp(t){var ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;left:-9999px;top:-9999px';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');toast('链接已复制');}catch(e){toast('复制失败');}document.body.removeChild(ta);}
+
+var btt=document.getElementById('backToTop'),tick=false;
+window.addEventListener('scroll',function(){if(!tick){requestAnimationFrame(function(){if(window.scrollY>400)btt.classList.add('visible');else btt.classList.remove('visible');tick=false;});tick=true;}});
+btt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+
+// Auto lookup
+var lt;document.getElementById('nameInput').addEventListener('blur',function(){var n=this.value.trim();if(!n||n.length<2)return;clearTimeout(lt);lt=setTimeout(function(){doLookup(n);},300);});
+function doLookup(n){var s=document.getElementById('lookupStatus');s.textContent='搜索中...';fetch('https://www.wikidata.org/w/api.php?action=wbsearchentities&search='+encodeURIComponent(n)+'&language=zh&format=json&origin=*').then(function(r){return r.json();}).then(function(d){if(d.search&&d.search.length>0){var desc=d.search[0].description||'',m=desc.match(/\((\d{4})[–\-—](\d{4}|至今|present)/)||desc.match(/(\d{4})[年\s]*[–\-—]\s*(\d{4}|至今)/);if(m){document.getElementById('birthInput').value=m[1]+'-'+m[2];s.textContent='已填入: '+m[1]+'-'+m[2];}else{var by=desc.match(/(\d{4})/);if(by){document.getElementById('birthInput').value=by[1]+'-';s.textContent='已填入出生年份: '+by[1];}else{s.textContent='未找到，请手动填写';}}}else{s.textContent='未找到，请手动填写';}}).catch(function(){s.textContent='网络不通，请手动填写';});}
+
+// Upload
+var ua=document.getElementById('uploadArea'),up=document.getElementById('uploadPreview'),uph=document.getElementById('uploadPlaceholder'),pi=document.getElementById('photoInput');
+ua.addEventListener('click',function(){pi.click();});
+pi.addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){var im=new Image();im.onload=function(){up.src=ev.target.result;up.style.display='block';uph.style.display='none';ua.classList.add('has-img');uploadedImg=im;};im.src=ev.target.result;};r.readAsDataURL(f);});
+
+// Style parser
+function parseStyle(s){s=s.toLowerCase();if(/黑白|极简|mono/i.test(s))return{bg:['#1a1a1a','#0d0d0d'],accent:'#fff'};if(/复古|暖|retro|warm|胶片/i.test(s))return{bg:['#3d1f0a','#1a0d04'],accent:'#f4a460'};if(/冷|科技|tech|蓝/i.test(s))return{bg:['#0a1a2e','#05101e'],accent:'#4da6ff'};if(/自然|绿|nature|green|清新/i.test(s))return{bg:['#0a2a1a','#051a0d'],accent:'#5cb85c'};if(/活力|鲜艳|bright|vibrant|撞色/i.test(s))return{bg:['#2a0a2a','#150515'],accent:'#ff6b9d'};return{bg:['#0f0f14','#050508'],accent:'#c0a080'};}
+
+function extractColors(img){var cv=document.createElement('canvas'),cx=cv.getContext('2d'),sw=Math.min(img.width,100),sh=Math.round(img.height*(sw/img.width));cv.width=sw;cv.height=sh;cx.drawImage(img,0,0,sw,sh);var p=cx.getImageData(0,0,sw,sh).data,r=0,g=0,b=0,n=0;for(var i=0;i<p.length;i+=16){r+=p[i];g+=p[i+1];b+=p[i+2];n++;}r=Math.round(r/n);g=Math.round(g/n);b=Math.round(b/n);return{avg:'rgb('+r+','+g+','+b+')',dark:'rgb('+Math.round(r*.35)+','+Math.round(g*.35)+','+Math.round(b*.35)+')',darker:'rgb('+Math.round(r*.18)+','+Math.round(g*.18)+','+Math.round(b*.18)+')'};}
+
+// Generate
+function generatePoster(){
+    var nameV=document.getElementById('nameInput').value.trim();if(!nameV){toast('请输入人物姓名');return;}
+    var q1=document.getElementById('quote1Input').value.trim();if(!q1){toast('请至少输入第一句语录');return;}
+    var life=document.getElementById('birthInput').value.trim();
+    var q2=document.getElementById('quote2Input').value.trim(),q3=document.getElementById('quote3Input').value.trim();
+    var sty=document.getElementById('styleInput').value.trim()||'经典励志';
+    var quotes=[q1];if(q2)quotes.push(q2);if(q3)quotes.push(q3);
+    var apiKey=localStorage.getItem('site_ai_key')||'',hasAI=!!(apiKey&&apiKey.length>10);
+    var prog=document.getElementById('generateProgress'),btn=document.getElementById('generateBtn');
+    prog.style.display='block';btn.disabled=true;btn.innerHTML='生成中...';
+
+    if(hasAI){
+        prog.innerHTML='<span class="spinner"></span>AI 正在创作海报（约 5-10 秒）...';
+        aiGenerate(nameV,life,quotes,sty,apiKey,prog,btn);
+    }else{
+        if(!uploadedImg){toast('请先上传人物图片');prog.style.display='none';btn.disabled=false;btn.innerHTML='生成海报';return;}
+        prog.innerHTML='<span class="spinner"></span>正在生成海报...';
+        setTimeout(function(){try{renderCanvasPoster(nameV,life,quotes,sty);finish(prog,btn,nameV,q1,sty);}catch(e){prog.style.display='none';btn.disabled=false;btn.innerHTML='生成海报';console.error(e);toast('生成失败');}},100);
     }
+}
 
-    function downloadAll() {
-        var btn = document.getElementById('downloadAllBtn'), orig = btn.innerHTML; btn.disabled = true; btn.innerHTML = '打包中...';
-        if(typeof JSZip==='undefined'){showToast('JSZip 加载失败');btn.disabled=false;btn.innerHTML=orig;return;}
-        var zip = new JSZip(), folder = zip.folder('励志海报'), total = posters.length;
-        var fts = posters.map(function(p,i){
-            btn.innerHTML = '打包中 ('+(i+1)+'/'+total+')...';
-            return fetch(imgPath+p.file).then(function(r){return r.blob();}).then(function(b){folder.file(p.download,b);});
-        });
-        Promise.all(fts).then(function(){
-            btn.innerHTML='生成 ZIP...'; return zip.generateAsync({type:'blob'});
-        }).then(function(zb){
-            var u=URL.createObjectURL(zb), a=document.createElement('a');a.href=u;a.download='励志海报_全部.zip';
-            document.body.appendChild(a);a.click();document.body.removeChild(a);
-            setTimeout(function(){URL.revokeObjectURL(u);},1000);showToast('ZIP 下载完成');
-        }).catch(function(e){console.error(e);showToast('打包失败');}).finally(function(){btn.disabled=false;btn.innerHTML=orig;});
-    }
+function finish(prog,btn,nameV,q1,sty){prog.style.display='none';btn.disabled=false;btn.innerHTML='生成海报';document.getElementById('canvasPreview').style.display='block';document.getElementById('canvasPreview').scrollIntoView({behavior:'smooth',block:'center'});autoSave(nameV,q1,sty);}
 
-    function wechatShare(){
-        var url=window.location.href;
-        if(navigator.share){navigator.share({title:'致梦想改变世界的人 - 励志海报',text:'乔布斯、段永平、查理·芒格、凯文·凯利、黄峥、张一鸣，励志海报免费下载。',url:url}).catch(function(e){if(e.name!=='AbortError')copyLink(url);});}
-        else{copyLink(url);}
-    }
-    function copyLink(u){
-        if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(function(){showToast('链接已复制，请打开微信粘贴分享');}).catch(function(){fallbackCopy(u);});}
-        else{fallbackCopy(u);}
-    }
-    function fallbackCopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;left:-9999px;top:-9999px';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');showToast('链接已复制，请打开微信粘贴分享');}catch(e){showToast('复制失败');}document.body.removeChild(ta);}
+function aiGenerate(nameV,life,quotes,sty,apiKey,prog,btn){
+    var today=new Date().toLocaleDateString('zh-CN'),uk='ai_usage_'+today,used=parseInt(localStorage.getItem(uk)||'0'),limit=parseInt(localStorage.getItem('site_ai_limit')||'20');
+    if(used>=limit){prog.style.display='none';btn.disabled=false;btn.innerHTML='生成海报';toast('今日 AI 次数已用完（'+limit+'次）');return;}
+    var quoteT=quotes.join('；');
+    var prompt='A beautiful cinematic inspirational poster. The poster features a dignified portrait of '+nameV+'. The mood is '+sty+'. Elegant lighting, professional color grading, dark atmospheric background, film grain texture, 3:4 portrait poster design, high quality. IMPORTANT: The image must NOT contain any text, letters, words, numbers or watermarks. Leave the bottom 30% of the image as a clean dark area for text overlay.';
+    fetch('https://api.siliconflow.cn/v1/images/generations',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify({model:'Kwai-Kolors/Kolors',prompt:prompt,image_size:'960x1280',batch_size:1,num_inference_steps:20,guidance_scale:7.5,output_format:'jpeg'})})
+    .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error('HTTP '+r.status+': '+(e.message||JSON.stringify(e)));});return r.json();})
+    .then(function(d){var iu=(d.images&&d.images[0])?(d.images[0].url||''):'';if(!iu&&d.data&&d.data[0])iu=d.data[0].url||'';if(!iu)throw new Error('API 未返回图片');return fetch(iu).then(function(r){return r.blob();}).then(function(blob){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(e){res(e.target.result);};r.onerror=rej;r.readAsDataURL(blob);});}).then(function(bgDU){localStorage.setItem(uk,String(used+1));renderWithAIBG(bgDU,nameV,life,quotes,sty);finish(prog,btn,nameV,quotes[0],sty);});})
+    .catch(function(e){console.error('AI:',e.message||e);if(uploadedImg){prog.innerHTML='<span class="spinner"></span>AI 失败，使用照片生成...';setTimeout(function(){try{renderCanvasPoster(nameV,life,quotes,sty);finish(prog,btn,nameV,quotes[0],sty);}catch(e2){prog.style.display='none';btn.disabled=false;btn.innerHTML='生成海报';toast('生成失败');}},50);}else{prog.style.display='none';btn.disabled=false;btn.innerHTML='生成海报';toast('AI 生成失败: '+(e.message||'未知错误'));}});
+}
 
-    var btt=document.getElementById('backToTop'),ticking=false;
-    window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(function(){if(window.scrollY>400)btt.classList.add('visible');else btt.classList.remove('visible');ticking=false;});ticking=true;}});
-    btt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+function renderWithAIBG(bgDU,nameV,life,quotes,sty){
+    var canvas=document.getElementById('posterCanvas'),ctx=canvas.getContext('2d'),W=800,H=1132;canvas.width=W;canvas.height=H;
+    var bg=new Image();bg.onload=function(){ctx.drawImage(bg,0,0,W,H);drawTextOverlay(ctx,W,H,nameV,life,quotes);genDU=canvas.toDataURL('image/jpeg',.94);};bg.src=bgDU;if(bg.complete){ctx.drawImage(bg,0,0,W,H);drawTextOverlay(ctx,W,H,nameV,life,quotes);genDU=canvas.toDataURL('image/jpeg',.94);}
+}
 
-    // ============ AUTO LOOKUP ============
-    var lookupTimer;
-    document.getElementById('nameInput').addEventListener('blur', function() {
-        var nameVal = this.value.trim();
-        if (!nameVal || nameVal.length < 2) return;
-        clearTimeout(lookupTimer);
-        lookupTimer = setTimeout(function() { doLookup(nameVal); }, 300);
-    });
+function drawTextOverlay(ctx,W,H,nameV,life,quotes){
+    var og=ctx.createLinearGradient(0,H*.55,0,H);og.addColorStop(0,'rgba(0,0,0,0)');og.addColorStop(.5,'rgba(0,0,0,.3)');og.addColorStop(1,'rgba(0,0,0,.75)');ctx.fillStyle=og;ctx.fillRect(0,0,W,H);
+    var nY=H*.68;ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='bold 52px "PingFang SC","Noto Serif SC","SimSun","Microsoft YaHei",serif';ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=10;ctx.shadowOffsetY=2;ctx.fillText(nameV,W/2,nY);ctx.shadowColor='transparent';ctx.shadowBlur=0;
+    var nxt=nY+24;if(life){ctx.font='20px "Georgia","PingFang SC",serif';ctx.fillStyle='rgba(255,255,255,.5)';ctx.fillText(life,W/2,nxt+30);nxt+=50;}
+    var dY=nxt+14;ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(W/2-100,dY);ctx.lineTo(W/2-18,dY);ctx.stroke();ctx.beginPath();ctx.moveTo(W/2+18,dY);ctx.lineTo(W/2+100,dY);ctx.stroke();ctx.fillStyle='rgba(255,255,255,.4)';ctx.beginPath();ctx.moveTo(W/2,dY-4);ctx.lineTo(W/2+4,dY);ctx.lineTo(W/2,dY+4);ctx.lineTo(W/2-4,dY);ctx.fill();
+    var qY=dY+36,fs=quotes.length===1?30:(quotes.length===2?26:22);ctx.font='normal '+fs+'px "PingFang SC","Noto Serif SC","STSong","Microsoft YaHei",serif';ctx.fillStyle='rgba(255,255,255,.88)';
+    quotes.forEach(function(q,qi){var mw=W-160,ls=[],cl='';for(var wi=0;wi<q.length;wi++){var tl=cl+q[wi];if(ctx.measureText(tl).width>mw&&cl.length>0){ls.push(cl);cl=q[wi];}else{cl=tl;}}if(cl)ls.push(cl);var lh=fs+14;ls.forEach(function(l,li){var dp=(ls.length===1&&qi===0)?'“'+l+'”':l;ctx.fillText(dp,W/2,qY+li*lh);});if(qi<quotes.length-1)qY+=ls.length*lh+18;});
+}
 
-    function doLookup(nameVal) {
-        var status = document.getElementById('lookupStatus');
-        status.textContent = '搜索中...';
-        var url = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search='+encodeURIComponent(nameVal)+'&language=zh&format=json&origin=*';
-        fetch(url).then(function(r){return r.json();}).then(function(data){
-            if (data.search && data.search.length > 0) {
-                var desc = data.search[0].description || '';
-                var m = desc.match(/\((\d{4})[–\-—](\d{4}|至今|present)/) || desc.match(/(\d{4})[年\s]*[–\-—]\s*(\d{4}|至今)/);
-                if (m) {
-                    document.getElementById('birthInput').value = m[1]+'-'+m[2];
-                    status.textContent = '已自动填入: '+m[1]+'-'+m[2];
-                } else {
-                    var by = desc.match(/(\d{4})/);
-                    if (by) { document.getElementById('birthInput').value = by[1]+'-'; status.textContent = '已填入出生年份: '+by[1]; }
-                    else { status.textContent = '未找到，请手动填写'; }
-                }
-            } else { status.textContent = '未找到，请手动填写'; }
-        }).catch(function(e){
-            status.textContent = '网络不通，请手动填写';
-        });
-    }
+function renderCanvasPoster(nameV,life,quotes,sty){
+    var canvas=document.getElementById('posterCanvas'),ctx=canvas.getContext('2d'),W=800,H=1132,design=parseStyle(sty),colors=extractColors(uploadedImg);
+    canvas.width=W;canvas.height=H;
+    var bgG=ctx.createRadialGradient(W/2,H*.38,W*.15,W/2,H*.5,W*.85);bgG.addColorStop(0,design.bg[0]);bgG.addColorStop(.5,design.bg[1]);bgG.addColorStop(1,'#050510');ctx.fillStyle=bgG;ctx.fillRect(0,0,W,H);
+    var id=ctx.getImageData(0,0,W,H),d=id.data;for(var i=0;i<d.length;i+=4){var nz=(Math.random()-.5)*14;d[i]=Math.min(255,Math.max(0,d[i]+nz));d[i+1]=Math.min(255,Math.max(0,d[i+1]+nz));d[i+2]=Math.min(255,Math.max(0,d[i+2]+nz));}ctx.putImageData(id,0,0);
+    var ir=uploadedImg.width/uploadedImg.height,tw,th;if(ir>1.1){tw=W*.8;th=tw/ir;}else if(ir<.9){th=H*.52;tw=th*ir;}else{tw=W*.72;th=H*.52;}var dx=(W-tw)/2,dy=55;
+    ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=40;ctx.shadowOffsetY=20;ctx.fillStyle='#1a1a1a';roundR(ctx,dx-3,dy-3,tw+6,th+6,6);ctx.fill();ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+    ctx.save();ctx.beginPath();roundR(ctx,dx,dy,tw,th,4);ctx.clip();ctx.drawImage(uploadedImg,dx,dy,tw,th);
+    var fg=ctx.createLinearGradient(0,dy+th*.65,0,dy+th+1);fg.addColorStop(0,'rgba(0,0,0,0)');fg.addColorStop(.7,'rgba(0,0,0,.4)');fg.addColorStop(1,design.bg[1]);ctx.fillStyle=fg;ctx.fillRect(dx,dy,tw,th);ctx.restore();
+    drawTextOverlay(ctx,W,H,nameV,life,quotes);
+    genDU=canvas.toDataURL('image/jpeg',.94);
+}
 
-    // ============ STYLE TO DESIGN MAPPING ============
-    function parseStyle(styleText) {
-        var s = styleText.toLowerCase();
-        var palettes = {
-            mono:    { bg:['#1a1a1a','#0d0d0d'], accent:'#ffffff', name:'极简黑白' },
-            warm:    { bg:['#3d1f0a','#1a0d04'], accent:'#f4a460', name:'复古暖调' },
-            cool:    { bg:['#0a1a2e','#05101e'], accent:'#4da6ff', name:'冷峻科技' },
-            nature:  { bg:['#0a2a1a','#051a0d'], accent:'#5cb85c', name:'自然清新' },
-            dark:    { bg:['#0f0f14','#050508'], accent:'#c0a080', name:'暗黑高级' },
-            vibrant: { bg:['#2a0a2a','#150515'], accent:'#ff6b9d', name:'活力撞色' }
-        };
-        if (/黑白|极简|mono/i.test(s)) return palettes.mono;
-        if (/复古|暖|retro|warm|胶片/i.test(s)) return palettes.warm;
-        if (/冷|科技|tech|blue|蓝/i.test(s)) return palettes.cool;
-        if (/自然|绿|nature|green|清新/i.test(s)) return palettes.nature;
-        if (/暗黑|黑|dark|酷|高级/i.test(s)) return palettes.dark;
-        if (/活力|暖色|鲜艳|bright|vibrant|撞色/i.test(s)) return palettes.vibrant;
-        return palettes.dark; // default
-    }
+function roundR(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
 
-    // ============ POSTER GENERATOR ============
-    var uploadArea = document.getElementById('uploadArea');
-    var uploadPreview = document.getElementById('uploadPreview');
-    var uploadPlaceholder = document.getElementById('uploadPlaceholder');
-    var photoInput = document.getElementById('photoInput');
-    var uploadedImage = null;
+function dlGen(){if(!genDU){toast('请先生成海报');return;}var n=document.getElementById('nameInput').value.trim()||'人物';var a=document.createElement('a');a.href=genDU;a.download=n+'说你一定行.jpg';document.body.appendChild(a);a.click();document.body.removeChild(a);toast('海报下载中');}
 
-    uploadArea.addEventListener('click', function(){ photoInput.click(); });
-    photoInput.addEventListener('change', function(e) {
-        var file = e.target.files[0]; if (!file) return;
-        var reader = new FileReader();
-        reader.onload = function(ev) {
-            var img = new Image();
-            img.onload = function() {
-                uploadPreview.src = ev.target.result; uploadPreview.style.display='block';
-                uploadPlaceholder.style.display='none'; uploadArea.classList.add('has-image');
-                uploadedImage = img;
-            };
-            img.src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
-    });
+var GK='poster_gallery_items';
+function autoSave(n,q,s){if(!genDU)return;var g=getG();g.unshift({id:Date.now(),name:n,quote:q,style:s,image:genDU,time:new Date().toLocaleString('zh-CN')});if(g.length>50)g=g.slice(0,50);try{localStorage.setItem(GK,JSON.stringify(g));}catch(e){}}
+function getG(){try{return JSON.parse(localStorage.getItem(GK))||[];}catch(e){return[];}}
 
-    function extractColors(img) {
-        var cv=document.createElement('canvas'),cx=cv.getContext('2d');
-        var sw=Math.min(img.width,100),sh=Math.round(img.height*(sw/img.width));
-        cv.width=sw;cv.height=sh;cx.drawImage(img,0,0,sw,sh);
-        var p=cx.getImageData(0,0,sw,sh).data,r=0,g=0,b=0,n=0;
-        for(var i=0;i<p.length;i+=16){r+=p[i];g+=p[i+1];b+=p[i+2];n++;}
-        r=Math.round(r/n);g=Math.round(g/n);b=Math.round(b/n);
-        return {avg:'rgb('+r+','+g+','+b+')',dark:'rgb('+Math.round(r*0.35)+','+Math.round(g*0.35)+','+Math.round(b*0.35)+')',darker:'rgb('+Math.round(r*0.18)+','+Math.round(g*0.18)+','+Math.round(b*0.18)+')'};
-    }
+function openG(){var g=getG(),grid=document.getElementById('galleryGrid'),emp=document.getElementById('galleryEmpty');grid.innerHTML='';if(g.length===0){emp.style.display='block';}else{emp.style.display='none';g.forEach(function(it){var d=document.createElement('div');d.className='gallery-item';d.innerHTML='<img src="'+it.image+'" alt="'+esc(it.name||'')+' 海报" loading="lazy"><div class="info"><strong>'+esc(it.name||'')+'</strong><br>'+esc(it.quote.substring(0,30))+'<br>'+(it.style||'')+' · '+it.time+'</div>';grid.appendChild(d);});}document.getElementById('galleryModal').classList.add('open');document.body.style.overflow='hidden';}
+function closeG(){document.getElementById('galleryModal').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('galleryModal').addEventListener('click',function(e){if(e.target===this)closeG();});
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-    function generatePoster() {
-        if (!uploadedImage) { showToast('请先上传人物图片'); return; }
-        var nameVal = document.getElementById('nameInput').value.trim();
-        if (!nameVal) { showToast('请输入人物姓名'); return; }
-        var quote1 = document.getElementById('quote1Input').value.trim();
-        if (!quote1) { showToast('请至少输入第一句语录'); return; }
-        var lifespan = document.getElementById('birthInput').value.trim();
-        var quote2 = document.getElementById('quote2Input').value.trim();
-        var quote3 = document.getElementById('quote3Input').value.trim();
-        var styleVal = document.getElementById('styleInput').value.trim() || '经典励志';
-        var quotes = [quote1];
-        if (quote2) quotes.push(quote2);
-        if (quote3) quotes.push(quote3);
+// Admin
+setTimeout(function(){var k=localStorage.getItem('site_ai_key')||'';if(k&&k.length>10)document.getElementById('aiBadge').style.display='inline-block';},500);
+document.getElementById('adminSaveBtn').addEventListener('click',function(){var k=document.getElementById('adminApiKey').value.trim(),l=document.getElementById('adminApiLimit').value;localStorage.setItem('site_ai_key',k);localStorage.setItem('site_ai_limit',l);document.getElementById('adminStatus').textContent=k?'已保存！':'已清除。';if(k)document.getElementById('aiBadge').style.display='inline-block';else document.getElementById('aiBadge').style.display='none';setTimeout(function(){document.getElementById('adminModal').classList.remove('open');document.body.style.overflow='';},800);});
+document.getElementById('adminCloseBtn').addEventListener('click',function(){document.getElementById('adminModal').classList.remove('open');document.body.style.overflow='';});
+document.getElementById('adminModal').addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');document.body.style.overflow='';}});
 
-        var progressEl = document.getElementById('generateProgress');
-        progressEl.style.display = 'block';
-        progressEl.innerHTML = '<span class="spinner"></span>正在生成海报...';
-        var btn = document.getElementById('generateBtn');
-        btn.disabled = true; btn.innerHTML = '生成中...';
+var sig=document.getElementById('adminTrigger')||document.querySelector('footer .sig');
+var cc=0,adminTriggerEl=document.querySelector('footer .sig');
+adminTriggerEl.style.cursor='default';
+adminTriggerEl.addEventListener('click',function(){cc++;if(cc>=5){cc=0;var k=localStorage.getItem('site_ai_key')||'',l=localStorage.getItem('site_ai_limit')||'20';document.getElementById('adminApiKey').value=k;document.getElementById('adminApiLimit').value=l;document.getElementById('adminStatus').textContent=k?'已配置 · 今日已用: '+(parseInt(localStorage.getItem('ai_usage_'+new Date().toLocaleDateString('zh-CN'))||'0'))+' 次':'未配置';document.getElementById('adminModal').classList.add('open');document.body.style.overflow='hidden';}setTimeout(function(){cc=0;},2000);});
 
-        setTimeout(function() {
-                try {
-                    renderPoster(nameVal, lifespan, quotes, styleVal, null);
-                    finishPosterRender(progressEl, btn, nameVal, quote1, styleVal);
-                } catch(e) { progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报'; console.error(e); showToast('生成失败'); }
-            }, 100);
-    }
-
-    function finishPosterRender(progressEl, btn, nameVal, quote1, styleVal) {
-        progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报';
-        document.getElementById('canvasPreview').style.display='block';
-        document.getElementById('canvasPreview').scrollIntoView({behavior:'smooth',block:'center'});
-        autoSaveToGallery(nameVal, quote1, styleVal);
-    }
-
-    function generateWithAI(nameVal, lifespan, quotes, styleVal, progressEl, btn) {
-        var today = new Date().toLocaleDateString('zh-CN');
-        var usageKey = 'ai_usage_'+today;
-        var used = parseInt(localStorage.getItem(usageKey)||'0');
-        if (used >= AI_DAILY_LIMIT) { progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报'; showToast('今日 AI 次数已用完（'+AI_DAILY_LIMIT+'次），请明天再试'); return; }
-
-        var prompt = 'A beautiful inspirational poster portrait of '+nameVal+'. Style: '+styleVal+'. Dark cinematic moody background, professional lighting, elegant magazine composition, poster design, high quality, 3:4 portrait orientation. NO text, NO letters, NO words, NO watermarks in the image. Clean dark background for text overlay.';
-
-        // Use Kolors model (available to all SiliconFlow users by default)
-        var model = 'Kwai-Kolors/Kolors';
-        progressEl.innerHTML = '<span class="spinner"></span>AI 正在生成海报背景（约 5-10 秒）...';
-
-        function tryGenerate(m) {
-            return fetch('https://api.siliconflow.cn/v1/images/generations', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+AI_API_KEY },
-                body: JSON.stringify({ model: m, prompt: prompt, image_size: '960x1280', batch_size: 1, num_inference_steps: 20, guidance_scale: 7.5, output_format: 'jpeg' })
-            }).then(function(r) {
-                if (!r.ok) return r.json().then(function(e) { throw new Error('HTTP '+r.status+': '+(e.message||JSON.stringify(e))); });
-                return r.json();
-            });
-        }
-
-        tryGenerate(model).then(function(data){
-            if (data.error) throw new Error(data.message||data.error);
-            var imgUrl = data.images && data.images[0] ? (data.images[0].url || data.images[0].b64_json) : null;
-            if (!imgUrl) {
-                if (data.data && data.data[0]) imgUrl = data.data[0].url || data.data[0].b64_json;
-            }
-            if (!imgUrl) throw new Error('API 返回成功但未包含图片，请检查模型是否可用');
-            // Download the AI image as data URL
-            return fetch(imgUrl).then(function(r){return r.blob();}).then(function(blob){
-                return new Promise(function(resolve, reject){
-                    var reader = new FileReader();
-                    reader.onload = function(e){ resolve(e.target.result); };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                });
-            }).then(function(bgDataUrl){
-                localStorage.setItem(usageKey, String(used+1));
-                updateUsageDisplay(used+1);
-                renderPoster(nameVal, lifespan, quotes, styleVal, bgDataUrl);
-                finishPosterRender(progressEl, btn, nameVal, quotes[0], styleVal);
-            });
-        }).catch(function(e){
-            console.error('AI error:', e.message || e);
-            progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报';
-            showToast('AI 生成失败: '+(e.message||'网络错误')+'，已用普通模式');
-            // Fallback to canvas-only
-            setTimeout(function() {
-                try { renderPoster(nameVal, lifespan, quotes, styleVal, null); finishPosterRender(progressEl, btn, nameVal, quotes[0], styleVal); }
-                catch(e2) { console.error(e2); }
-            }, 50);
-        });
-    }
-
-    function updateUsageDisplay(used) {
-        document.getElementById('apiUsageCount').textContent = used;
-        document.getElementById('apiLimitDisplay').textContent = AI_DAILY_LIMIT;
-        document.getElementById('usageInfo').style.display = 'block';
-    }
-
-    function renderPoster(nameVal, lifespan, quotes, styleVal, aiBgDataUrl) {
-        var canvas = document.getElementById('posterCanvas');
-        var ctx = canvas.getContext('2d');
-        var W = 800, H = 1132;
-        canvas.width = W; canvas.height = H;
-
-        var colors = extractColors(uploadedImage);
-        var design = parseStyle(styleVal);
-
-        // ── Deep background with subtle radial glow behind photo ──
-        var bgGrad = ctx.createRadialGradient(W/2, H*0.38, W*0.15, W/2, H*0.5, W*0.85);
-        bgGrad.addColorStop(0, design.bg[0]);
-        bgGrad.addColorStop(0.5, design.bg[1]);
-        bgGrad.addColorStop(1, '#050510');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, W, H);
-
-        // ── Fine film grain ──
-        var imgD = ctx.getImageData(0, 0, W, H), d = imgD.data;
-        for (var i = 0; i < d.length; i += 4) {
-            var nz = (Math.random() - 0.5) * 14;
-            d[i] = Math.min(255, Math.max(0, d[i] + nz));
-            d[i+1] = Math.min(255, Math.max(0, d[i+1] + nz));
-            d[i+2] = Math.min(255, Math.max(0, d[i+2] + nz));
-        }
-        ctx.putImageData(imgD, 0, 0);
-
-        // ── Photo: larger, portrait-oriented, with soft blending edges ──
-        var ir = uploadedImage.width / uploadedImage.height;
-        var tw, th;
-        if (ir > 1.1) { tw = W * 0.8; th = tw / ir; }
-        else if (ir < 0.9) { th = H * 0.52; tw = th * ir; }
-        else { tw = W * 0.72; th = H * 0.52; }
-        var dx = (W - tw) / 2, dy = 55;
-
-        // Soft drop shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 40; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 20;
-        ctx.fillStyle = '#1a1a1a';
-        roundRect(ctx, dx - 3, dy - 3, tw + 6, th + 6, 6);
-        ctx.fill();
-        ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-
-        // Clip photo with rounded corners
-        ctx.save();
-        ctx.beginPath();
-        roundRect(ctx, dx, dy, tw, th, 4);
-        ctx.clip();
-        ctx.drawImage(uploadedImage, dx, dy, tw, th);
-
-        // Soft gradient fade at bottom of photo for text legibility
-        var fadeGrad = ctx.createLinearGradient(0, dy + th * 0.65, 0, dy + th + 1);
-        fadeGrad.addColorStop(0, 'rgba(0,0,0,0)');
-        fadeGrad.addColorStop(0.7, 'rgba(0,0,0,0.4)');
-        fadeGrad.addColorStop(1, design.bg[1]);
-        ctx.fillStyle = fadeGrad;
-        ctx.fillRect(dx, dy, tw, th);
-        ctx.restore();
-
-        // ── Name ──
-        var nameY = dy + th + 70;
-        ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
-        ctx.font = 'bold 52px "PingFang SC","Noto Serif SC","Source Han Serif SC","SimSun","Microsoft YaHei",serif';
-        ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 2;
-        ctx.fillText(nameVal, W/2, nameY);
-        ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
-
-        // ── Lifespan ──
-        var nextY = nameY + 20;
-        if (lifespan) {
-            ctx.font = '20px "Georgia","PingFang SC","Noto Serif SC",serif';
-            ctx.fillStyle = 'rgba(255,255,255,0.45)';
-            ctx.fillText(lifespan, W/2, nameY + 36);
-            nextY = nameY + 60;
-        }
-
-        // ── Elegant divider ──
-        var divY = nextY + 10;
-        var divW = 120;
-        ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(W/2 - divW, divY); ctx.lineTo(W/2 - 20, divY); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(W/2 + 20, divY); ctx.lineTo(W/2 + divW, divY); ctx.stroke();
-        // Center diamond
-        ctx.fillStyle = 'rgba(255,255,255,0.4)';
-        ctx.beginPath();
-        ctx.moveTo(W/2, divY - 5); ctx.lineTo(W/2 + 5, divY);
-        ctx.lineTo(W/2, divY + 5); ctx.lineTo(W/2 - 5, divY);
-        ctx.fill();
-
-        // ── Quotes ──
-        var qsY = divY + 38;
-        var quoteFontBase = 28;
-        if (quotes.length === 2) quoteFontBase = 24;
-        if (quotes.length === 3) quoteFontBase = 21;
-
-        quotes.forEach(function(q, qi) {
-            var fs = quoteFontBase;
-            ctx.font = 'normal ' + fs + 'px "PingFang SC","Noto Serif SC","STSong","Microsoft YaHei",serif';
-            ctx.fillStyle = 'rgba(255,255,255,0.85)';
-
-            // Word wrap
-            var maxW = W - 160, lines = [], cur = '';
-            for (var wi = 0; wi < q.length; wi++) {
-                var test = cur + q[wi];
-                if (ctx.measureText(test).width > maxW && cur.length > 0) { lines.push(cur); cur = q[wi]; }
-                else { cur = test; }
-            }
-            if (cur) lines.push(cur);
-
-            // Add quotation marks for single-line quotes
-            var lh = fs + 14;
-            lines.forEach(function(l, li) {
-                var displayText = l;
-                if (lines.length === 1 && qi === 0) {
-                    displayText = '“' + l + '”';
-                }
-                ctx.fillText(displayText, W/2, qsY + li * lh);
-            });
-
-            if (qi < quotes.length - 1) qsY += lines.length * lh + 18;
-        });
-
-        generatedDataUrl = canvas.toDataURL('image/jpeg', 0.94);
-    }
-
-    function roundRect(ctx, x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.lineTo(x + w - r, y);
-        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-        ctx.lineTo(x + w, y + h - r);
-        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-        ctx.lineTo(x + r, y + h);
-        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-        ctx.lineTo(x, y + r);
-        ctx.quadraticCurveTo(x, y, x + r, y);
-        ctx.closePath();
-    }
-
-    function downloadGenerated() {
-        if (!generatedDataUrl) { showToast('请先生成海报'); return; }
-        var nameVal = document.getElementById('nameInput').value.trim() || '人物';
-        var a = document.createElement('a'); a.href = generatedDataUrl; a.download = nameVal + '说你一定行.jpg';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a); showToast('海报下载中');
-    }
-
-    function autoSaveToGallery(nameVal, quote1, styleVal) {
-        if (!generatedDataUrl) return;
-        var gallery = getGallery();
-        gallery.unshift({id:Date.now(),name:nameVal,quote:quote1,style:styleVal,image:generatedDataUrl,time:new Date().toLocaleString('zh-CN')});
-        if(gallery.length>50)gallery=gallery.slice(0,50);
-        try{localStorage.setItem(GALLERY_KEY,JSON.stringify(gallery));}catch(e){}
-    }
-
-    var GALLERY_KEY='poster_gallery_items';
-    function getGallery(){try{return JSON.parse(localStorage.getItem(GALLERY_KEY))||[];}catch(e){return[];}}
-
-    function openGallery(){
-        var g=getGallery(),grid=document.getElementById('galleryGrid'),empty=document.getElementById('galleryEmpty');
-        grid.innerHTML='';
-        if(g.length===0){empty.style.display='block';}else{empty.style.display='none';
-            g.forEach(function(item){
-                var d=document.createElement('div');d.className='gallery-item';
-                d.innerHTML='<img src="'+item.image+'" alt="'+esc(item.name||'')+' 海报" loading="lazy"><div class="info"><strong>'+esc(item.name||'')+'</strong><br>'+esc(item.quote.substring(0,30))+'<br>'+(item.style||'')+' · '+item.time+'</div>';
-                grid.appendChild(d);
-            });
-        }
-        document.getElementById('galleryModal').classList.add('open');document.body.style.overflow='hidden';
-    }
-    function closeGallery(){document.getElementById('galleryModal').classList.remove('open');document.body.style.overflow='';}
-    document.getElementById('galleryModal').addEventListener('click',function(e){if(e.target===this)closeGallery();});
-    function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-
-    // ============ ADMIN PANEL ============
-    var adminTrigger = document.getElementById('adminTrigger');
-    var clickCount = 0;
-    adminTrigger.addEventListener('click', function() {
-        clickCount++;
-        if (clickCount >= 5) { clickCount = 0; openAdmin(); }
-        setTimeout(function(){ clickCount = 0; }, 2000);
-    });
-
-    function openAdmin() {
-        var savedKey = localStorage.getItem('site_ai_key') || '';
-        var savedLimit = localStorage.getItem('site_ai_limit') || '20';
-        document.getElementById('adminApiKey').value = savedKey;
-        document.getElementById('adminApiLimit').value = savedLimit;
-        document.getElementById('adminStatus').textContent = savedKey ? '已配置 API Key · 今日已用: '+(parseInt(localStorage.getItem('ai_usage_'+new Date().toLocaleDateString('zh-CN'))||'0'))+' 次' : '尚未配置 API Key';
-        document.getElementById('adminModal').classList.add('open');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeAdmin() {
-        document.getElementById('adminModal').classList.remove('open');
-        document.body.style.overflow = '';
-        // Refresh AI key in memory
-        AI_API_KEY = localStorage.getItem('site_ai_key') || '';
-        hasAI = !!(AI_API_KEY && AI_API_KEY.length > 10);
-        AI_DAILY_LIMIT = parseInt(localStorage.getItem('site_ai_limit')||'20');
-        updateUsageDisplay(parseInt(localStorage.getItem('ai_usage_'+new Date().toLocaleDateString('zh-CN'))||'0'));
-    }
-
-    document.getElementById('adminSaveBtn').addEventListener('click', function() {
-        var key = document.getElementById('adminApiKey').value.trim();
-        var limit = document.getElementById('adminApiLimit').value;
-        localStorage.setItem('site_ai_key', key);
-        localStorage.setItem('site_ai_limit', limit);
-        document.getElementById('adminStatus').textContent = key ? '设置已保存！刷新页面后生效。' : '已清除 API Key。';
-        setTimeout(closeAdmin, 1000);
-    });
-    document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
-    document.getElementById('adminModal').addEventListener('click', function(e) { if (e.target === this) closeAdmin(); });
-
-    // Init admin values on load
-    (function() {
-        AI_DAILY_LIMIT = parseInt(localStorage.getItem('site_ai_limit')||'20');
-        AI_API_KEY = localStorage.getItem('site_ai_key') || '';
-        hasAI = !!(AI_API_KEY && AI_API_KEY.length > 10);
-        var today = new Date().toLocaleDateString('zh-CN');
-        var uk = 'ai_usage_'+today;
-        var used = parseInt(localStorage.getItem(uk)||'0');
-        if (used > 0) updateUsageDisplay(used);
-    })();
-
-    // Hook up
-    document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
-    document.getElementById('wechatShareBtn').addEventListener('click', wechatShare);
-    document.getElementById('galleryBtn').addEventListener('click', openGallery);
-    document.getElementById('generateBtn').addEventListener('click', generatePoster);
-    document.getElementById('downloadGeneratedBtn').addEventListener('click', downloadGenerated);
-    document.getElementById('modalCloseBtn').addEventListener('click', closeGallery);
-
-    })();
-    </script>
+// Hook up
+document.getElementById('downloadAllBtn').addEventListener('click',dlAll);
+document.getElementById('wechatShareBtn').addEventListener('click',wxShare);
+document.getElementById('galleryBtn').addEventListener('click',openG);
+document.getElementById('generateBtn').addEventListener('click',generatePoster);
+document.getElementById('downloadGeneratedBtn').addEventListener('click',dlGen);
+document.getElementById('modalCloseBtn').addEventListener('click',closeG);
+})();
+</script>
 </body>
 </html>
