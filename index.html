@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>致梦想改变世界的人 - 励志海报</title>
+    <title>致梦想改变世界的人</title>
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="致梦想改变世界的人 - 励志海报">
@@ -184,12 +184,12 @@
     (function() {
 
     var posters = [
-        { name: '史蒂夫·乔布斯', file: '史蒂夫·乔布斯_励志海报.jpg' },
-        { name: '段永平',       file: '段永平_励志海报.jpg' },
-        { name: '查理·芒格',     file: '查理·芒格_励志海报.jpg' },
-        { name: '凯文·凯利',     file: '凯文·凯利_励志海报.jpg' },
-        { name: '黄峥',         file: '黄峥_励志海报.jpg' },
-        { name: '张一鸣',       file: '张一鸣_励志海报.jpg' }
+        { name: '史蒂夫·乔布斯', file: '史蒂夫·乔布斯_励志海报.jpg', download: '史蒂夫·乔布斯说你一定行.jpg' },
+        { name: '段永平',       file: '段永平_励志海报.jpg',     download: '段永平说你一定行.jpg' },
+        { name: '查理·芒格',     file: '查理·芒格_励志海报.jpg',   download: '查理·芒格说你一定行.jpg' },
+        { name: '凯文·凯利',     file: '凯文·凯利_励志海报.jpg',   download: '凯文·凯利说你一定行.jpg' },
+        { name: '黄峥',         file: '黄峥_励志海报.jpg',       download: '黄峥说你一定行.jpg' },
+        { name: '张一鸣',       file: '张一鸣_励志海报.jpg',     download: '张一鸣说你一定行.jpg' }
     ];
 
     var imgPath = 'images/';
@@ -203,7 +203,7 @@
             '<div class="poster-img-wrapper">' +
                 '<img class="poster-img" src="' + imgPath + p.file + '" alt="' + p.name + ' 励志海报">' +
             '</div>' +
-            '<a class="btn btn-download" href="' + imgPath + p.file + '" download="' + p.file + '">' +
+            '<a class="btn btn-download" href="' + imgPath + p.file + '" download="' + p.download + '">' +
                 '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
                 '下载海报' +
             '</a>';
@@ -242,7 +242,7 @@
             btn.innerHTML = '打包中 (' + (i + 1) + '/' + total + ')...';
             return fetch(imgPath + p.file)
                 .then(function(r) { return r.blob(); })
-                .then(function(blob) { folder.file(p.file, blob); });
+                .then(function(blob) { folder.file(p.download, blob); });
         });
 
         Promise.all(fetches)
