@@ -257,16 +257,16 @@
                 </div>
                 <div>
                     <label for="nameInput">人物姓名 *</label>
-                    <input type="text" id="nameInput" placeholder="例如：史蒂夫·乔布斯" maxlength="50">
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="nameInput" placeholder="例如：史蒂夫·乔布斯" maxlength="50" style="flex:1;">
+                        <button class="btn btn-outline" id="lookupBtn" style="white-space:nowrap; font-size:14px; padding:10px 16px;">搜索信息</button>
+                    </div>
+                    <div id="lookupStatus" style="font-size:12px; color:var(--text-tertiary); margin-top:4px; display:none;"></div>
                 </div>
                 <div style="display:flex; gap:12px;">
                     <div style="flex:1;">
-                        <label for="birthInput">出生年份</label>
-                        <input type="text" id="birthInput" placeholder="1955" maxlength="10">
-                    </div>
-                    <div style="flex:1;">
-                        <label for="deathInput">逝世年份</label>
-                        <input type="text" id="deathInput" placeholder="2011（在世可不填）" maxlength="10">
+                        <label for="birthInput">生卒年份</label>
+                        <input type="text" id="birthInput" placeholder="如 1955-2011" maxlength="20">
                     </div>
                 </div>
                 <div>
@@ -292,7 +292,6 @@
                 <canvas id="posterCanvas"></canvas>
                 <div class="preview-actions">
                     <button class="btn btn-primary" id="downloadGeneratedBtn">下载我的海报</button>
-                    <button class="btn btn-download" id="saveToGalleryBtn">发布到画廊</button>
                 </div>
             </div>
         </div>
@@ -436,7 +435,6 @@
     var uploadPreview = document.getElementById('uploadPreview');
     var uploadPlaceholder = document.getElementById('uploadPlaceholder');
     var photoInput = document.getElementById('photoInput');
-    var generatedDataUrl = null;
 
     uploadArea.addEventListener('click', function() { photoInput.click(); });
 
@@ -462,30 +460,18 @@
 
     function generatePoster() {
         if (!uploadedImage) { showToast('请先上传人物图片'); return; }
-
         var nameVal = document.getElementById('nameInput').value.trim();
         if (!nameVal) { showToast('请输入人物姓名'); return; }
-
         var quote1 = document.getElementById('quote1Input').value.trim();
         if (!quote1) { showToast('请至少输入第一句语录'); return; }
-
-        var birth = document.getElementById('birthInput').value.trim();
-        var death = document.getElementById('deathInput').value.trim();
+        var lifespan = document.getElementById('birthInput').value.trim();
         var quote2 = document.getElementById('quote2Input').value.trim();
         var quote3 = document.getElementById('quote3Input').value.trim();
         var styleVal = document.getElementById('styleInput').value.trim() || '经典励志';
-
-        // Collect quotes
         var quotes = [quote1];
         if (quote2) quotes.push(quote2);
         if (quote3) quotes.push(quote3);
 
-        // Build lifespan string
-        var lifespan = '';
-        if (birth && death) lifespan = birth + ' - ' + death;
-        else if (birth) lifespan = birth + ' - ';
-
-        // Progress
         var progressEl = document.getElementById('generateProgress');
         progressEl.style.display = 'block';
         progressEl.innerHTML = '<span class="spinner"></span>正在生成海报...';
@@ -493,7 +479,6 @@
         btn.disabled = true;
         btn.innerHTML = '生成中...';
 
-        // Use setTimeout to let the UI update before heavy canvas work
         setTimeout(function() {
             try {
                 renderPoster(nameVal, lifespan, quotes, styleVal);
@@ -502,6 +487,7 @@
                 btn.innerHTML = '生成海报';
                 document.getElementById('canvasPreview').style.display = 'block';
                 document.getElementById('canvasPreview').scrollIntoView({behavior:'smooth', block:'center'});
+                autoSaveToGallery(nameVal, quote1, styleVal);
             } catch(e) {
                 progressEl.style.display = 'none';
                 btn.disabled = false;
@@ -512,165 +498,103 @@
         }, 100);
     }
 
+    function extractColors(img) {
+        var cv = document.createElement('canvas'); var cx = cv.getContext('2d');
+        var sw = Math.min(img.width, 100); var sh = Math.round(img.height*(sw/img.width));
+        cv.width=sw; cv.height=sh; cx.drawImage(img,0,0,sw,sh);
+        var p = cx.getImageData(0,0,sw,sh).data; var r=0,g=0,b=0,n=0;
+        for (var i=0;i<p.length;i+=16){r+=p[i];g+=p[i+1];b+=p[i+2];n++;}
+        r=Math.round(r/n);g=Math.round(g/n);b=Math.round(b/n);
+        return {
+            avg:'rgb('+r+','+g+','+b+')',
+            dark:'rgb('+Math.round(r*0.35)+','+Math.round(g*0.35)+','+Math.round(b*0.35)+')',
+            darker:'rgb('+Math.round(r*0.18)+','+Math.round(g*0.18)+','+Math.round(b*0.18)+')'
+        };
+    }
+
     function renderPoster(nameVal, lifespan, quotes, styleVal) {
         var canvas = document.getElementById('posterCanvas');
         var ctx = canvas.getContext('2d');
-        var W = 800, H = 1132; // A3-ish ratio
+        var colors = extractColors(uploadedImage);
+        var W=800, H=1132; canvas.width=W; canvas.height=H;
 
-        canvas.width = W;
-        canvas.height = H;
+        // Dark background from photo colors
+        var bg=ctx.createLinearGradient(0,0,0,H);
+        bg.addColorStop(0,colors.darker); bg.addColorStop(0.4,colors.dark); bg.addColorStop(1,colors.darker);
+        ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
 
-        // Dark background with subtle vignette
-        var bgGrad = ctx.createRadialGradient(W/2, H*0.4, 100, W/2, H*0.4, W*0.8);
-        bgGrad.addColorStop(0, '#2d2d3f');
-        bgGrad.addColorStop(1, '#0d0d18');
-        ctx.fillStyle = bgGrad;
-        ctx.fillRect(0, 0, W, H);
+        // Film grain
+        var id=ctx.getImageData(0,0,W,H); var pd=id.data;
+        for (var i=0;i<pd.length;i+=4){var nz=(Math.random()-0.5)*16;pd[i]=Math.min(255,Math.max(0,pd[i]+nz));pd[i+1]=Math.min(255,Math.max(0,pd[i+1]+nz));pd[i+2]=Math.min(255,Math.max(0,pd[i+2]+nz));}
+        ctx.putImageData(id,0,0);
 
-        // Subtle texture lines
-        ctx.strokeStyle = 'rgba(255,255,255,0.02)';
-        ctx.lineWidth = 1;
-        for (var y = 0; y < H; y += 40) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-        }
+        // Subtle geometric circles
+        ctx.fillStyle='rgba(255,255,255,0.025)'; ctx.beginPath(); ctx.arc(W*0.85,H*0.18,W*0.5,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='rgba(255,255,255,0.018)'; ctx.beginPath(); ctx.arc(W*0.15,H*0.72,W*0.32,0,Math.PI*2); ctx.fill();
 
-        // Draw photo - top portion
-        var imgW = uploadedImage.width;
-        var imgH = uploadedImage.height;
-        var targetW = W * 0.72;
-        var targetH = H * 0.42;
-        var scale = Math.min(targetW / imgW, targetH / imgH);
-        var dw = imgW * scale, dh = imgH * scale;
-        var dx = (W - dw) / 2, dy = 50;
+        // Cinematic photo crop
+        var ir=uploadedImage.width/uploadedImage.height;
+        var tw,th; if(ir>1){tw=W*0.78;th=tw/ir;}else{th=H*0.48;tw=th*ir;}
+        var dx=(W-tw)/2, dy=55;
 
-        // Photo with slight border
-        ctx.shadowColor = 'rgba(0,0,0,0.6)';
-        ctx.shadowBlur = 50;
-        ctx.shadowOffsetY = 25;
-        ctx.fillStyle = '#333';
-        ctx.fillRect(dx - 4, dy - 4, dw + 8, dh + 8);
-        ctx.shadowColor = 'transparent';
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetY = 0;
+        ctx.shadowColor='rgba(0,0,0,0.7)'; ctx.shadowBlur=60; ctx.shadowOffsetY=30;
+        ctx.fillStyle='#222'; ctx.fillRect(dx-3,dy-3,tw+6,th+6);
+        ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetY=0;
+        ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=2; ctx.strokeRect(dx-3,dy-3,tw+6,th+6);
+        ctx.drawImage(uploadedImage,dx,dy,tw,th);
 
-        // Border
-        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(dx - 4, dy - 4, dw + 8, dh + 8);
+        // Gradient overlay at photo bottom
+        var ov=ctx.createLinearGradient(0,dy+th*0.7,0,dy+th);
+        ov.addColorStop(0,'rgba(0,0,0,0)'); ov.addColorStop(1,colors.darker);
+        ctx.fillStyle=ov; ctx.fillRect(dx,dy+th*0.7,tw,th*0.3);
 
-        ctx.drawImage(uploadedImage, dx, dy, dw, dh);
+        // Name
+        var nameY=dy+th+65; ctx.fillStyle='#ffffff'; ctx.textAlign='center';
+        ctx.font='bold 48px "PingFang SC","Noto Serif SC","SimSun","Microsoft YaHei",serif';
+        ctx.fillText(nameVal,W/2,nameY);
 
-        // Name and lifespan - below photo
-        var nameY = dy + dh + 60;
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 44px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(nameVal, W/2, nameY);
+        // Lifespan
+        if(lifespan){ctx.font='italic 22px "Georgia","PingFang SC","Noto Serif SC",serif';ctx.fillStyle='rgba(255,255,255,0.5)';ctx.fillText(lifespan,W/2,nameY+35);}
 
-        if (lifespan) {
-            ctx.font = '20px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif';
-            ctx.fillStyle = 'rgba(255,255,255,0.55)';
-            ctx.fillText(lifespan, W/2, nameY + 32);
-        }
+        // Double-line divider with diamond
+        var dvY=lifespan?nameY+55:nameY+35;
+        ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.lineWidth=0.5;
+        ctx.beginPath();ctx.moveTo(W/2-90,dvY);ctx.lineTo(W/2+90,dvY);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(W/2-55,dvY+5);ctx.lineTo(W/2+55,dvY+5);ctx.stroke();
+        ctx.fillStyle='rgba(255,255,255,0.4)';
+        ctx.beginPath();ctx.moveTo(W/2,dvY-4);ctx.lineTo(W/2+4,dvY+2.5);ctx.lineTo(W/2,dvY+9);ctx.lineTo(W/2-4,dvY+2.5);ctx.fill();
 
-        // Decorative divider
-        var dividerY = lifespan ? nameY + 55 : nameY + 35;
-        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(W/2 - 80, dividerY);
-        ctx.lineTo(W/2 + 80, dividerY);
-        ctx.stroke();
-
-        // Small diamond at center of divider
-        ctx.fillStyle = 'rgba(255,255,255,0.5)';
-        ctx.beginPath();
-        ctx.moveTo(W/2, dividerY - 4);
-        ctx.lineTo(W/2 + 4, dividerY);
-        ctx.lineTo(W/2, dividerY + 4);
-        ctx.lineTo(W/2 - 4, dividerY);
-        ctx.fill();
-
-        // Quotes
-        var quoteStartY = dividerY + 45;
-        ctx.fillStyle = '#ffffff';
-        ctx.textAlign = 'center';
-
-        quotes.forEach(function(q, qi) {
-            var fontSize = quotes.length === 1 ? 32 : (quotes.length === 2 ? 28 : 24);
-            ctx.font = 'normal ' + fontSize + 'px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", serif';
-            ctx.fillStyle = '#ffffff';
-
-            // Word wrap for each quote
-            var words = q.split('');
-            var lines = [];
-            var line = '';
-            var maxW = W - 120;
-            for (var wi = 0; wi < words.length; wi++) {
-                var test = line + words[wi];
-                if (ctx.measureText(test).width > maxW && line.length > 0) {
-                    lines.push(line);
-                    line = words[wi];
-                } else { line = test; }
-            }
-            if (line) lines.push(line);
-
-            var lineHeight = fontSize + 8;
-            var blockStartY = quoteStartY;
-            // Calculate block height to center multiple quotes vertically
-            if (qi > 0) {
-                // Estimate previous block height
-                var prevQ = quotes[qi - 1];
-                var prevLines = 1;
-                var prevW = '';
-                for (var pw = 0; pw < prevQ.length; pw++) {
-                    var pt = prevW + prevQ[pw];
-                    ctx.font = 'normal ' + (quotes.length === 1 ? 32 : (quotes.length === 2 ? 28 : 24)) + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
-                    if (ctx.measureText(pt).width > maxW && prevW.length > 0) { prevLines++; prevW = prevQ[pw]; }
-                    else { prevW = pt; }
-                }
-                quoteStartY += prevLines * (fontSize + 8) + 20;
-            }
-
-            ctx.font = 'normal ' + fontSize + 'px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif';
-            lines.forEach(function(l, li) {
-                ctx.fillText(l, W/2, quoteStartY + li * lineHeight);
-            });
-
-            if (qi < quotes.length - 1) {
-                quoteStartY += lines.length * lineHeight + 20;
-            }
+        // Quotes with proper Chinese typography
+        var qsY=dvY+40;
+        quotes.forEach(function(q,qi){
+            var fs=quotes.length===1?30:(quotes.length===2?26:22);
+            ctx.font='normal '+fs+'px "PingFang SC","Noto Serif SC","STSong","Microsoft YaHei",serif';
+            ctx.fillStyle='rgba(255,255,255,0.9)';
+            var mw=W-140,ls=[],cl='';
+            for(var wi=0;wi<q.length;wi++){var tl=cl+q[wi];if(ctx.measureText(tl).width>mw&&cl.length>0){ls.push(cl);cl=q[wi];}else{cl=tl;}}
+            if(cl)ls.push(cl); var lh=fs+12;
+            ls.forEach(function(l,li){ctx.fillText(l,W/2,qsY+li*lh);});
+            if(qi<quotes.length-1)qsY+=ls.length*lh+14;
         });
 
-        // Calculate where quotes end for style tag placement
-        var totalQuoteLines = 0;
-        quotes.forEach(function(q) {
-            var fs = quotes.length === 1 ? 32 : (quotes.length === 2 ? 28 : 24);
-            var w = '', lns = 1, mw = W - 120;
-            ctx.font = 'normal ' + fs + 'px "PingFang SC", "Microsoft YaHei", sans-serif';
-            for (var ci = 0; ci < q.length; ci++) {
-                var t = w + q[ci];
-                if (ctx.measureText(t).width > mw && w.length > 0) { lns++; w = q[ci]; }
-                else { w = t; }
-            }
-            totalQuoteLines += lns;
+        // Style pill at bottom
+        var tql=0; quotes.forEach(function(q){
+            var fs=quotes.length===1?30:(quotes.length===2?26:22);
+            ctx.font='normal '+fs+'px "PingFang SC",serif';var l='',ln=1;
+            for(var ci=0;ci<q.length;ci++){var t2=l+q[ci];if(ctx.measureText(t2).width>W-140&&l.length>0){ln++;l=q[ci];}else{l=t2;}}tql+=ln;
         });
+        var fy=dvY+40+tql*38+(quotes.length-1)*14+50;
+        var pw=ctx.measureText('· '+styleVal+' ·').width+40, px2=W/2-pw/2;
+        ctx.fillStyle='rgba(255,255,255,0.07)';
+        ctx.beginPath();ctx.moveTo(px2+20,fy);ctx.lineTo(px2+pw-20,fy);
+        ctx.quadraticCurveTo(px2+pw,fy,px2+pw,fy+20);ctx.lineTo(px2+pw,fy+20);
+        ctx.quadraticCurveTo(px2+pw,fy+20,px2+pw-20,fy+20);ctx.lineTo(px2+20,fy+20);
+        ctx.quadraticCurveTo(px2,fy+20,px2,fy);ctx.lineTo(px2,fy);
+        ctx.quadraticCurveTo(px2,fy,px2+20,fy);ctx.fill();
+        ctx.font='14px "PingFang SC","Microsoft YaHei",sans-serif';ctx.fillStyle='rgba(255,255,255,0.45)';
+        ctx.fillText('· '+styleVal+' ·',W/2,fy+5);
 
-        var finalQuoteY = dividerY + 45 + totalQuoteLines * 36 + (quotes.length - 1) * 20;
-
-        // Style tag
-        var tagY = Math.max(finalQuoteY + 50, H - 130);
-        ctx.font = '15px "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.35)';
-        ctx.fillText('风格: ' + styleVal, W/2, tagY);
-
-        // Watermark
-        ctx.font = '12px "PingFang SC", "Microsoft YaHei", sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.18)';
-        ctx.fillText('pengcongbest.github.io/p', W/2, H - 25);
-
-        // Store
-        generatedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        generatedDataUrl = canvas.toDataURL('image/jpeg', 0.93);
     }
 
     function downloadGenerated() {
@@ -685,83 +609,64 @@
         showToast('海报下载中');
     }
 
-    // ============ GALLERY ============
-    var GALLERY_KEY = 'poster_gallery_items';
-
-    function getGallery() {
-        try { return JSON.parse(localStorage.getItem(GALLERY_KEY)) || []; }
-        catch(e) { return []; }
+    // ============ WIKIDATA LOOKUP ============
+    function lookupPerson() {
+        var nameVal = document.getElementById('nameInput').value.trim();
+        if (!nameVal) { showToast('请先输入人物姓名'); return; }
+        var status = document.getElementById('lookupStatus');
+        var btn = document.getElementById('lookupBtn');
+        status.style.display='block'; status.textContent='搜索中...'; btn.disabled=true;
+        var url='https://www.wikidata.org/w/api.php?action=wbsearchentities&search='+encodeURIComponent(nameVal)+'&language=zh&format=json&origin=*';
+        fetch(url).then(function(r){return r.json();}).then(function(data){
+            if(data.search&&data.search.length>0){
+                var desc=data.search[0].description||'';
+                var m=desc.match(/\((\d{4})[–\-—](\d{4}|至今|present)/)||desc.match(/(\d{4})[年\s]*[–\-—]\s*(\d{4}|至今)/);
+                if(m){document.getElementById('birthInput').value=m[1]+'-'+m[2];status.textContent='已找到生卒年份: '+m[1]+'-'+m[2];}
+                else{var by=desc.match(/(\d{4})/);if(by){document.getElementById('birthInput').value=by[1]+'-';status.textContent='找到出生年份: '+by[1];}else{status.textContent='未找到生卒信息，请手动填写';}}
+            }else{status.textContent='未找到人物信息，请手动填写';}
+        }).catch(function(e){status.textContent='搜索失败（网络问题），请手动填写';}).finally(function(){btn.disabled=false;});
     }
 
-    function saveToGallery() {
-        if (!generatedDataUrl) { showToast('请先生成海报'); return; }
-        var nameVal = document.getElementById('nameInput').value.trim();
-        var quote1 = document.getElementById('quote1Input').value.trim();
-        var styleVal = document.getElementById('styleInput').value.trim() || '经典励志';
+    // ============ GALLERY (auto-save) ============
+    var GALLERY_KEY = 'poster_gallery_items';
+
+    function autoSaveToGallery(nameVal, quote1, styleVal) {
+        if (!generatedDataUrl) return;
         var gallery = getGallery();
-        gallery.unshift({
-            id: Date.now(),
-            name: nameVal,
-            quote: quote1,
-            style: styleVal,
-            image: generatedDataUrl,
-            time: new Date().toLocaleString('zh-CN')
-        });
-        if (gallery.length > 50) gallery = gallery.slice(0, 50);
-        try {
-            localStorage.setItem(GALLERY_KEY, JSON.stringify(gallery));
-            showToast('已发布到画廊！');
-        } catch(e) {
-            showToast('图片太大，请下载后手动分享');
-        }
+        gallery.unshift({id:Date.now(),name:nameVal,quote:quote1,style:styleVal,image:generatedDataUrl,time:new Date().toLocaleString('zh-CN')});
+        if(gallery.length>50)gallery=gallery.slice(0,50);
+        try{localStorage.setItem(GALLERY_KEY,JSON.stringify(gallery));}catch(e){}
+    }
+
+    function getGallery() {
+        try{return JSON.parse(localStorage.getItem(GALLERY_KEY))||[];}catch(e){return[];}
     }
 
     function openGallery() {
-        var gallery = getGallery();
-        var grid = document.getElementById('galleryGrid');
-        var empty = document.getElementById('galleryEmpty');
-        grid.innerHTML = '';
-        if (gallery.length === 0) {
-            empty.style.display = 'block';
-        } else {
-            empty.style.display = 'none';
-            gallery.forEach(function(item) {
-                var div = document.createElement('div');
-                div.className = 'gallery-item';
-                div.innerHTML =
-                    '<img src="' + item.image + '" alt="' + escapeHTML(item.name || '') + ' 海报" loading="lazy">' +
-                    '<div class="info"><strong>' + escapeHTML(item.name || '') + '</strong><br>' +
-                    escapeHTML(item.quote.substring(0,30)) + '<br>' +
-                    item.style + ' · ' + item.time + '</div>';
+        var gallery=getGallery();var grid=document.getElementById('galleryGrid');var empty=document.getElementById('galleryEmpty');
+        grid.innerHTML='';
+        if(gallery.length===0){empty.style.display='block';}else{empty.style.display='none';
+            gallery.forEach(function(item){
+                var div=document.createElement('div');div.className='gallery-item';
+                div.innerHTML='<img src="'+item.image+'" alt="'+escapeHTML(item.name||'')+' 海报" loading="lazy"><div class="info"><strong>'+escapeHTML(item.name||'')+'</strong><br>'+escapeHTML(item.quote.substring(0,30))+'<br>'+(item.style||'')+' · '+item.time+'</div>';
                 grid.appendChild(div);
             });
         }
-        document.getElementById('galleryModal').classList.add('open');
-        document.body.style.overflow = 'hidden';
+        document.getElementById('galleryModal').classList.add('open');document.body.style.overflow='hidden';
     }
 
-    function closeGallery() {
-        document.getElementById('galleryModal').classList.remove('open');
-        document.body.style.overflow = '';
-    }
+    function closeGallery() {document.getElementById('galleryModal').classList.remove('open');document.body.style.overflow='';}
+    document.getElementById('galleryModal').addEventListener('click',function(e){if(e.target===this)closeGallery();});
 
-    document.getElementById('galleryModal').addEventListener('click', function(e) {
-        if (e.target === this) closeGallery();
-    });
+    function escapeHTML(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-    function escapeHTML(s) {
-        var d = document.createElement('div');
-        d.textContent = s;
-        return d.innerHTML;
-    }
-
-    // Hook up buttons
+    // Hook up
     document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
     document.getElementById('wechatShareBtn').addEventListener('click', wechatShare);
     document.getElementById('galleryBtn').addEventListener('click', openGallery);
     document.getElementById('generateBtn').addEventListener('click', generatePoster);
     document.getElementById('downloadGeneratedBtn').addEventListener('click', downloadGenerated);
-    document.getElementById('saveToGalleryBtn').addEventListener('click', saveToGallery);
+    document.getElementById('lookupBtn').addEventListener('click', lookupPerson);
     document.getElementById('modalCloseBtn').addEventListener('click', closeGallery);
 
     })();
