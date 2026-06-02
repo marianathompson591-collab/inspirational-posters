@@ -520,15 +520,15 @@
 
         var prompt = 'A beautiful inspirational poster portrait of '+nameVal+'. Style: '+styleVal+'. Dark cinematic moody background, professional lighting, elegant magazine composition, poster design, high quality, 3:4 portrait orientation. NO text, NO letters, NO words, NO watermarks in the image. Clean dark background for text overlay.';
 
-        // Try FLUX.1-dev first (most reliable on SiliconFlow)
-        var model = 'black-forest-labs/FLUX.1-dev';
-        progressEl.innerHTML = '<span class="spinner"></span>AI 正在生成海报背景（约 8-15 秒）...';
+        // Use Kolors model (available to all SiliconFlow users by default)
+        var model = 'Kwai-Kolors/Kolors';
+        progressEl.innerHTML = '<span class="spinner"></span>AI 正在生成海报背景（约 5-10 秒）...';
 
         function tryGenerate(m) {
             return fetch('https://api.siliconflow.cn/v1/images/generations', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+AI_API_KEY },
-                body: JSON.stringify({ model: m, prompt: prompt, image_size: '768x1024', batch_size: 1, num_inference_steps: 25, output_format: 'jpeg' })
+                body: JSON.stringify({ model: m, prompt: prompt, image_size: '960x1280', batch_size: 1, num_inference_steps: 20, guidance_scale: 7.5, output_format: 'jpeg' })
             }).then(function(r) {
                 if (!r.ok) return r.json().then(function(e) { throw new Error('HTTP '+r.status+': '+(e.message||JSON.stringify(e))); });
                 return r.json();
