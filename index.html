@@ -274,19 +274,9 @@
                     <button class="btn btn-primary" id="generateBtn">生成海报</button>
                 </div>
                 <div class="generate-progress" id="generateProgress" style="display:none;"></div>
-                <details class="ai-config" id="aiConfig">
-                    <summary>AI 增强（可选，需 API Key）</summary>
-                    <p style="color:var(--text-secondary);margin-bottom:8px;">
-                        使用 AI 生成海报背景，再叠加你的照片和语录，效果远超纯排版。<br>
-                        推荐 <b>Replicate</b>（replicate.com），注册即送免费额度，用完后按量付费约 $0.005/张。<br>
-                        <b>推荐模型：black-forest-labs/flux-1.1-pro</b>，目前生图效果最好的开源模型。
-                    </p>
-                    <label for="apiKeyInput">Replicate API Key</label>
-                    <input type="password" id="apiKeyInput" placeholder="r8_..." style="width:100%;">
-                    <div style="margin-top:4px;font-size:12px;color:var(--text-tertiary);">
-                        今日已用: <span id="apiUsageCount">0</span> 次 | 每日上限: <input type="number" id="apiLimitInput" value="20" min="1" max="500" style="width:60px;padding:2px 6px;"> 次
-                    </div>
-                </details>
+                <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--text-tertiary);display:none;" id="usageInfo">
+                    今日 AI 已生成: <span id="apiUsageCount">0</span> / <span id="apiLimitDisplay">20</span> 次
+                </div>
             </div>
             <div class="canvas-preview" id="canvasPreview">
                 <canvas id="posterCanvas"></canvas>
@@ -297,8 +287,25 @@
         </div>
 
         <footer>
-            <p class="signature">彭聪 2026年5月于中国武汉</p>
+            <p class="signature" id="adminTrigger" style="cursor:default;" title="">彭聪 2026年5月于中国武汉</p>
         </footer>
+
+        <div class="modal-overlay" id="adminModal">
+            <div class="modal">
+                <button class="modal-close" id="adminCloseBtn">&times;</button>
+                <h2>管理员设置</h2>
+                <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;">
+                    在这里设置 AI 生图 API Key，所有访客生成海报时自动调用 AI。<br>
+                    去 <a href="https://siliconflow.cn" target="_blank">siliconflow.cn</a> 注册，在 API 管理页面获取 Key。
+                </p>
+                <label for="adminApiKey">SiliconFlow API Key</label>
+                <input type="password" id="adminApiKey" placeholder="sk-..." style="width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);font-size:16px;font-family:inherit;margin:8px 0 16px;">
+                <label for="adminApiLimit">每日 AI 生成上限</label>
+                <input type="number" id="adminApiLimit" value="20" min="1" max="500" style="width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);font-size:16px;margin:8px 0 16px;">
+                <div id="adminStatus" style="font-size:13px;color:var(--accent);margin-bottom:12px;"></div>
+                <button class="btn btn-primary" id="adminSaveBtn">保存设置</button>
+            </div>
+        </div>
     </div>
 
     <div class="modal-overlay" id="galleryModal">
@@ -474,91 +481,81 @@
         if (quote2) quotes.push(quote2);
         if (quote3) quotes.push(quote3);
 
-        var apiKey = document.getElementById('apiKeyInput').value.trim();
+        var AI_DAILY_LIMIT = 20;
+        var AI_API_KEY = localStorage.getItem('site_ai_key') || '';
+        var hasAI = !!(AI_API_KEY && AI_API_KEY.length > 10);
 
         var progressEl = document.getElementById('generateProgress');
         progressEl.style.display = 'block';
         var btn = document.getElementById('generateBtn');
         btn.disabled = true; btn.innerHTML = '生成中...';
 
-        if (apiKey && apiKey.startsWith('r8_')) {
-            // AI-enhanced mode
-            progressEl.innerHTML = '<span class="spinner"></span>AI 正在生成海报背景...';
-            generateWithAI(nameVal, lifespan, quotes, styleVal, apiKey, progressEl, btn);
+        if (hasAI) {
+            progressEl.innerHTML = '<span class="spinner"></span>AI 正在生成海报背景（约 5-10 秒）...';
+            generateWithAI(nameVal, lifespan, quotes, styleVal, progressEl, btn);
         } else {
-            // Canvas-only mode
             progressEl.innerHTML = '<span class="spinner"></span>正在生成海报...';
             setTimeout(function() {
                 try {
                     renderPoster(nameVal, lifespan, quotes, styleVal, null);
-                    progressEl.style.display = 'none'; btn.disabled = false; btn.innerHTML = '生成海报';
-                    document.getElementById('canvasPreview').style.display = 'block';
-                    document.getElementById('canvasPreview').scrollIntoView({behavior:'smooth',block:'center'});
-                    autoSaveToGallery(nameVal, quote1, styleVal);
+                    finishPosterRender(progressEl, btn, nameVal, quote1, styleVal);
                 } catch(e) { progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报'; console.error(e); showToast('生成失败'); }
             }, 100);
         }
     }
 
-    function generateWithAI(nameVal, lifespan, quotes, styleVal, apiKey, progressEl, btn) {
+    function finishPosterRender(progressEl, btn, nameVal, quote1, styleVal) {
+        progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报';
+        document.getElementById('canvasPreview').style.display='block';
+        document.getElementById('canvasPreview').scrollIntoView({behavior:'smooth',block:'center'});
+        autoSaveToGallery(nameVal, quote1, styleVal);
+    }
+
+    function generateWithAI(nameVal, lifespan, quotes, styleVal, progressEl, btn) {
         var today = new Date().toLocaleDateString('zh-CN');
         var usageKey = 'ai_usage_'+today;
         var used = parseInt(localStorage.getItem(usageKey)||'0');
-        var limit = parseInt(document.getElementById('apiLimitInput').value) || 20;
-        if (used >= limit) { progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报'; showToast('今日 AI 次数已用完，请明天再试或提高上限'); return; }
+        if (used >= AI_DAILY_LIMIT) { progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报'; showToast('今日 AI 次数已用完（'+AI_DAILY_LIMIT+'次），请明天再试'); return; }
 
-        var prompt = 'A beautiful inspirational poster portrait of '+nameVal+'. Style: '+styleVal+'. Dark cinematic background, professional lighting, elegant composition, poster design, high quality, 3:4 aspect ratio. NO text, NO letters, NO words, NO watermarks in the image. Clean background for text overlay.';
+        var prompt = 'A beautiful inspirational poster portrait of '+nameVal+'. Style: '+styleVal+'. Dark cinematic moody background, professional lighting, elegant magazine composition, poster design, high quality, 3:4 portrait orientation. NO text, NO letters, NO words, NO watermarks in the image. Clean dark background for text overlay.';
 
-        fetch('https://api.replicate.com/v1/models/black-forest-labs/flux-1.1-pro/predictions', {
+        fetch('https://api.siliconflow.cn/v1/images/generations', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Token '+apiKey },
-            body: JSON.stringify({ input: { prompt: prompt, aspect_ratio: '3:4', output_format: 'jpg', output_quality: 90 } })
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+AI_API_KEY },
+            body: JSON.stringify({ model: 'black-forest-labs/FLUX.1-pro', prompt: prompt, image_size: '864x1152', batch_size: 1, num_inference_steps: 28 })
         }).then(function(r){return r.json();}).then(function(data){
-            if (data.error) throw new Error(data.error);
-            var predId = data.id;
-            progressEl.innerHTML = '<span class="spinner"></span>AI 生成中（约 5-10 秒）...';
-            return pollPrediction(predId, apiKey);
-        }).then(function(outputUrl){
-            // Download AI-generated background
-            return fetch(outputUrl).then(function(r){return r.blob();}).then(function(blob){
-                return new Promise(function(resolve){
+            if (data.error) throw new Error(data.message||data.error);
+            var imgUrl = data.images && data.images[0] ? data.images[0].url : null;
+            if (!imgUrl) throw new Error('No image returned');
+            // Download the AI image as data URL
+            return fetch(imgUrl).then(function(r){return r.blob();}).then(function(blob){
+                return new Promise(function(resolve, reject){
                     var reader = new FileReader();
                     reader.onload = function(e){ resolve(e.target.result); };
+                    reader.onerror = reject;
                     reader.readAsDataURL(blob);
                 });
             }).then(function(bgDataUrl){
-                // Store usage
                 localStorage.setItem(usageKey, String(used+1));
-                document.getElementById('apiUsageCount').textContent = used+1;
-                // Render poster with AI background
+                updateUsageDisplay(used+1);
                 renderPoster(nameVal, lifespan, quotes, styleVal, bgDataUrl);
-                progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报';
-                document.getElementById('canvasPreview').style.display='block';
-                document.getElementById('canvasPreview').scrollIntoView({behavior:'smooth',block:'center'});
-                autoSaveToGallery(nameVal, quotes[0], styleVal);
+                finishPosterRender(progressEl, btn, nameVal, quotes[0], styleVal);
             });
         }).catch(function(e){
             console.error(e); progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报';
-            showToast('AI 生成失败: '+e.message+'，请检查 API Key 或网络');
+            showToast('AI 生成失败，使用普通模式生成');
+            // Fallback to canvas-only
+            setTimeout(function() {
+                try { renderPoster(nameVal, lifespan, quotes, styleVal, null); finishPosterRender(progressEl, btn, nameVal, quotes[0], styleVal); }
+                catch(e2) { console.error(e2); }
+            }, 50);
         });
     }
 
-    function pollPrediction(predId, apiKey) {
-        return new Promise(function(resolve, reject) {
-            var maxAttempts = 30, attempts = 0;
-            function check() {
-                attempts++;
-                fetch('https://api.replicate.com/v1/predictions/'+predId, {
-                    headers: { 'Authorization': 'Token '+apiKey }
-                }).then(function(r){return r.json();}).then(function(data){
-                    if (data.status === 'succeeded') { resolve(data.output); }
-                    else if (data.status === 'failed' || data.status === 'canceled') { reject(new Error(data.status)); }
-                    else if (attempts >= maxAttempts) { reject(new Error('timeout')); }
-                    else { setTimeout(check, 1500); }
-                }).catch(function(e){ reject(e); });
-            }
-            check();
-        });
+    function updateUsageDisplay(used) {
+        document.getElementById('apiUsageCount').textContent = used;
+        document.getElementById('apiLimitDisplay').textContent = AI_DAILY_LIMIT;
+        document.getElementById('usageInfo').style.display = 'block';
     }
 
     function renderPoster(nameVal, lifespan, quotes, styleVal, aiBgDataUrl) {
@@ -662,24 +659,6 @@
             if (qi < quotes.length - 1) qsY += ls.length * lh + 14;
         });
 
-        var tql = 0;
-        quotes.forEach(function(q) {
-            var fs = quotes.length === 1 ? 30 : (quotes.length === 2 ? 26 : 22);
-            ctx.font = 'normal ' + fs + 'px "PingFang SC",serif'; var l = '', ln = 1;
-            for (var ci = 0; ci < q.length; ci++) { var t2 = l + q[ci]; if (ctx.measureText(t2).width > W - 140 && l.length > 0) { ln++; l = q[ci]; } else { l = t2; } }
-            tql += ln;
-        });
-        var fy = dvY + 40 + tql * 38 + (quotes.length - 1) * 14 + 50;
-        var pw = ctx.measureText('· ' + styleVal + ' ·').width + 40, px = W/2 - pw/2;
-        ctx.fillStyle = 'rgba(255,255,255,0.07)';
-        ctx.beginPath(); ctx.moveTo(px + 20, fy); ctx.lineTo(px + pw - 20, fy);
-        ctx.quadraticCurveTo(px + pw, fy, px + pw, fy + 20); ctx.lineTo(px + pw, fy + 20);
-        ctx.quadraticCurveTo(px + pw, fy + 20, px + pw - 20, fy + 20); ctx.lineTo(px + 20, fy + 20);
-        ctx.quadraticCurveTo(px, fy + 20, px, fy); ctx.lineTo(px, fy);
-        ctx.quadraticCurveTo(px, fy, px + 20, fy); ctx.fill();
-        ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,0.45)';
-        ctx.fillText('· ' + styleVal + ' ·', W/2, fy + 5);
     }
 
     function downloadGenerated() {
@@ -716,25 +695,56 @@
     document.getElementById('galleryModal').addEventListener('click',function(e){if(e.target===this)closeGallery();});
     function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-    // API usage counter init
-    (function(){
+    // ============ ADMIN PANEL ============
+    var adminTrigger = document.getElementById('adminTrigger');
+    var clickCount = 0;
+    adminTrigger.addEventListener('click', function() {
+        clickCount++;
+        if (clickCount >= 5) { clickCount = 0; openAdmin(); }
+        setTimeout(function(){ clickCount = 0; }, 2000);
+    });
+
+    function openAdmin() {
+        var savedKey = localStorage.getItem('site_ai_key') || '';
+        var savedLimit = localStorage.getItem('site_ai_limit') || '20';
+        document.getElementById('adminApiKey').value = savedKey;
+        document.getElementById('adminApiLimit').value = savedLimit;
+        document.getElementById('adminStatus').textContent = savedKey ? '已配置 API Key · 今日已用: '+(parseInt(localStorage.getItem('ai_usage_'+new Date().toLocaleDateString('zh-CN'))||'0'))+' 次' : '尚未配置 API Key';
+        document.getElementById('adminModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAdmin() {
+        document.getElementById('adminModal').classList.remove('open');
+        document.body.style.overflow = '';
+        // Refresh AI key in memory
+        AI_API_KEY = localStorage.getItem('site_ai_key') || '';
+        hasAI = !!(AI_API_KEY && AI_API_KEY.length > 10);
+        AI_DAILY_LIMIT = parseInt(localStorage.getItem('site_ai_limit')||'20');
+        updateUsageDisplay(parseInt(localStorage.getItem('ai_usage_'+new Date().toLocaleDateString('zh-CN'))||'0'));
+    }
+
+    document.getElementById('adminSaveBtn').addEventListener('click', function() {
+        var key = document.getElementById('adminApiKey').value.trim();
+        var limit = document.getElementById('adminApiLimit').value;
+        localStorage.setItem('site_ai_key', key);
+        localStorage.setItem('site_ai_limit', limit);
+        document.getElementById('adminStatus').textContent = key ? '设置已保存！刷新页面后生效。' : '已清除 API Key。';
+        setTimeout(closeAdmin, 1000);
+    });
+    document.getElementById('adminCloseBtn').addEventListener('click', closeAdmin);
+    document.getElementById('adminModal').addEventListener('click', function(e) { if (e.target === this) closeAdmin(); });
+
+    // Init admin values on load
+    (function() {
+        AI_DAILY_LIMIT = parseInt(localStorage.getItem('site_ai_limit')||'20');
+        AI_API_KEY = localStorage.getItem('site_ai_key') || '';
+        hasAI = !!(AI_API_KEY && AI_API_KEY.length > 10);
         var today = new Date().toLocaleDateString('zh-CN');
         var uk = 'ai_usage_'+today;
         var used = parseInt(localStorage.getItem(uk)||'0');
-        document.getElementById('apiUsageCount').textContent = used;
-        // Restore API key if saved
-        var savedKey = localStorage.getItem('replicate_api_key');
-        if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
-        // Restore limit
-        var savedLimit = localStorage.getItem('api_daily_limit');
-        if (savedLimit) document.getElementById('apiLimitInput').value = savedLimit;
+        if (used > 0) updateUsageDisplay(used);
     })();
-    document.getElementById('apiKeyInput').addEventListener('change', function(){
-        localStorage.setItem('replicate_api_key', this.value.trim());
-    });
-    document.getElementById('apiLimitInput').addEventListener('change', function(){
-        localStorage.setItem('api_daily_limit', this.value);
-    });
 
     // Hook up
     document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
