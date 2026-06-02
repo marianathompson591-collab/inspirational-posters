@@ -62,17 +62,19 @@
         .modal-close:hover{background:var(--text3);color:#fff}
         .modal h2{text-align:center;font-size:22px;margin-bottom:24px}
         .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-        .gallery-item{border-radius:12px;overflow:hidden;box-shadow:var(--shadow);background:var(--bg);cursor:pointer;transition:transform .2s}
+        .gallery-item{border-radius:12px;overflow:hidden;box-shadow:var(--shadow);background:var(--bg);position:relative;transition:transform .2s}
         .gallery-item:hover{transform:scale(1.02)}
         .gallery-item img{width:100%;display:block}
         .gallery-item .info{padding:10px 12px;font-size:13px;color:var(--text2)}
         .gallery-item .info strong{color:var(--text)}
         .gallery-empty{text-align:center;color:var(--text3);padding:40px}
+        .del-btn{position:absolute;top:8px;right:8px;width:24px;height:24px;line-height:22px;text-align:center;border-radius:50%;border:none;background:rgba(231,76,60,.85);color:#fff;font-size:14px;cursor:pointer;z-index:10;opacity:0;transition:opacity .2s}
+        .gallery-item:hover .del-btn{opacity:1}.del-btn:hover{background:#c0392b}
         .lightbox{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);z-index:5000;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s}
         .lightbox.open{opacity:1;pointer-events:auto}
         .lightbox img{max-width:90%;max-height:90%;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
         footer{text-align:center;padding:20px;color:var(--text3);font-size:14px}
-        footer .sig{font-size:15px;color:var(--text2)}
+        footer .sig{font-size:15px;color:var(--text2);cursor:default}
         .back-to-top{position:fixed;bottom:30px;right:30px;width:44px;height:44px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);opacity:0;pointer-events:none;transition:opacity .3s,transform .2s;z-index:1000}
         .back-to-top.visible{opacity:1;pointer-events:auto}
         .back-to-top:hover{transform:translateY(-2px);color:var(--accent)}
@@ -102,124 +104,116 @@
 
     <div class="action-bar">
         <button class="btn btn-p" id="downloadAllBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            下载全部海报 (ZIP)
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载全部海报 (ZIP)
         </button>
         <button class="btn btn-w" id="wechatShareBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18zM13.5 10.602c-2.596 0-4.688 2.09-4.688 4.652 0 2.562 2.092 4.653 4.688 4.653.466 0 .926-.068 1.362-.196l1.276.744a.224.224 0 00.112.036.197.197 0 00.194-.197c0-.048-.012-.095-.032-.142l-.263-.992a.392.392 0 01.143-.442C18.154 17.508 19.2 15.991 19.2 15.254c0-2.562-2.092-4.652-4.688-4.652h-.012.012zm-2.344 2.326a.78.78 0 01.781.787.78.78 0 01-.781.785.78.78 0 01-.781-.785c0-.434.347-.787.781-.787zm4.688 0a.78.78 0 01.781.787.78.78 0 01-.781.785.78.78 0 01-.781-.785c0-.434.347-.787.781-.787z"/></svg>
-            微信分享
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 01.213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 00.167-.054l1.903-1.114a.864.864 0 01.717-.098 10.16 10.16 0 002.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178A1.17 1.17 0 014.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 01-1.162 1.178 1.17 1.17 0 01-1.162-1.178c0-.651.52-1.18 1.162-1.18zM13.5 10.602c-2.596 0-4.688 2.09-4.688 4.652 0 2.562 2.092 4.653 4.688 4.653.466 0 .926-.068 1.362-.196l1.276.744a.224.224 0 00.112.036.197.197 0 00.194-.197c0-.048-.012-.095-.032-.142l-.263-.992a.392.392 0 01.143-.442C18.154 17.508 19.2 15.991 19.2 15.254c0-2.562-2.092-4.652-4.688-4.652h-.012.012zm-2.344 2.326a.78.78 0 01.781.787.78.78 0 01-.781.785.78.78 0 01-.781-.785c0-.434.347-.787.781-.787zm4.688 0a.78.78 0 01.781.787.78.78 0 01-.781.785.78.78 0 01-.781-.785c0-.434.347-.787.781-.787z"/></svg>微信分享
         </button>
         <button class="btn btn-g" id="galleryBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            看看朋友们的海报
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>看看朋友们的海报
         </button>
     </div>
 
     <div class="upload-sec" id="uploadSection">
         <h2>分享你制作的海报</h2>
-        <p class="sub">上传你做好的海报图片，汇入共享画廊，大家都能看到</p>
+        <p class="sub">上传你做好的海报图片，汇入共享画廊，所有访客都能看到</p>
         <div class="upload-form">
-            <div>
-                <label for="uploadName">海报人物 *</label>
-                <input type="text" id="uploadName" placeholder="例如：史蒂夫·乔布斯" maxlength="50">
-            </div>
-            <div>
-                <label>海报图片 *</label>
+            <div><label for="uploadName">海报人物 *</label>
+                <input type="text" id="uploadName" placeholder="例如：史蒂夫·乔布斯" maxlength="50"></div>
+            <div><label>海报图片 *</label>
                 <div class="upload-drop" id="uploadDrop">
-                    <div class="ph" id="uploadPH">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>点击上传海报图片
-                    </div>
-                    <img id="uploadImgPreview" style="display:none" alt="预览">
-                </div>
-                <input type="file" id="uploadFileInput" accept="image/*">
-            </div>
-            <div class="upload-btn-wrap">
-                <button class="btn btn-p" id="uploadSubmitBtn">上传到画廊</button>
-            </div>
+                    <div class="ph" id="uploadPH"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>点击上传海报图片</div>
+                    <img id="uploadImgPreview" style="display:none" alt="预览"></div>
+                <input type="file" id="uploadFileInput" accept="image/*"></div>
+            <div class="upload-btn-wrap"><button class="btn btn-p" id="uploadSubmitBtn">上传到画廊</button></div>
             <div class="upload-progress" id="uploadProgress"></div>
         </div>
     </div>
 
-    <footer>
-        <p class="sig">彭聪 2026年5月于中国武汉</p>
-    </footer>
+    <footer><p class="sig">彭聪 2026年5月于中国武汉</p></footer>
 </div>
 
-<div class="modal-overlay" id="galleryModal">
-    <div class="modal">
-        <button class="modal-close" id="modalCloseBtn">&times;</button>
-        <h2>朋友们的海报</h2>
-        <div class="gallery-grid" id="galleryGrid"></div>
-        <div class="gallery-empty" id="galleryEmpty" style="display:none">还没有人上传海报，来做第一个吧！</div>
-    </div>
-</div>
+<div class="modal-overlay" id="galleryModal"><div class="modal">
+    <button class="modal-close" id="modalCloseBtn">&times;</button>
+    <h2>朋友们的海报</h2>
+    <div class="gallery-grid" id="galleryGrid"></div>
+    <div class="gallery-empty" id="galleryEmpty" style="display:none">还没有人上传海报，来做第一个吧！</div>
+</div></div>
 
 <div class="lightbox" id="lightbox"><img id="lightboxImg" alt="海报大图"></div>
-
 <button class="back-to-top" id="backToTop" title="回到顶部">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
-</button>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/umd/supabase.min.js"></script>
 <script>
 (function(){
+var SUPABASE_URL='https://sjpjuaxyxtadvtoextlu.supabase.co';
+var SUPABASE_KEY='sb_publishable_mmTNaC7RuO2T0oo6z5VQUA_K9YPclsH';
+var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 var posters=[{name:'史蒂夫·乔布斯',file:'史蒂夫·乔布斯_励志海报.jpg',dl:'史蒂夫·乔布斯说你一定行.jpg'},{name:'段永平',file:'段永平_励志海报.jpg',dl:'段永平说你一定行.jpg'},{name:'查理·芒格',file:'查理·芒格_励志海报.jpg',dl:'查理·芒格说你一定行.jpg'},{name:'凯文·凯利',file:'凯文·凯利_励志海报.jpg',dl:'凯文·凯利说你一定行.jpg'},{name:'黄峥',file:'黄峥_励志海报.jpg',dl:'黄峥说你一定行.jpg'},{name:'张一鸣',file:'张一鸣_励志海报.jpg',dl:'张一鸣说你一定行.jpg'}];
 var imgP='images/';
-
 var pl=document.getElementById('posterList');
 posters.forEach(function(p){var d=document.createElement('div');d.className='poster-item';d.innerHTML='<div class="poster-iw"><img class="poster-img" src="'+imgP+p.file+'" alt="'+p.name+' 励志海报" loading="lazy"></div><a class="btn btn-dl" href="'+imgP+p.file+'" download="'+p.dl+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载海报</a>';pl.appendChild(d);});
 
 var tt;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show');},2500);}
-
 function dlAll(){var b=document.getElementById('downloadAllBtn'),o=b.innerHTML;b.disabled=true;b.innerHTML='打包中...';if(typeof JSZip==='undefined'){toast('JSZip 加载失败');b.disabled=false;b.innerHTML=o;return;}var z=new JSZip(),f=z.folder('励志海报'),t=posters.length;var fts=posters.map(function(p,i){b.innerHTML='打包中 ('+(i+1)+'/'+t+')...';return fetch(imgP+p.file).then(function(r){return r.blob();}).then(function(bl){f.file(p.dl,bl);});});Promise.all(fts).then(function(){b.innerHTML='生成 ZIP...';return z.generateAsync({type:'blob'});}).then(function(zb){var u=URL.createObjectURL(zb),a=document.createElement('a');a.href=u;a.download='励志海报_全部.zip';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u);},1000);toast('ZIP 下载完成');}).catch(function(e){console.error(e);toast('打包失败');}).finally(function(){b.disabled=false;b.innerHTML=o;});}
-
 function wxShare(){var u=window.location.href;if(navigator.share){navigator.share({title:'致梦想改变世界的人 - 励志海报',text:'乔布斯、段永平、查理·芒格、凯文·凯利、黄峥、张一鸣，励志海报免费下载。',url:u}).catch(function(e){if(e.name!=='AbortError')cpLk(u);});}else{cpLk(u);}}
 function cpLk(u){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(function(){toast('链接已复制，请打开微信粘贴分享');}).catch(function(){fbCp(u);});}else{fbCp(u);}}
 function fbCp(t){var ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;left:-9999px;top:-9999px';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');toast('链接已复制');}catch(e){toast('复制失败');}document.body.removeChild(ta);}
-
 var btt=document.getElementById('backToTop'),tick=false;
 window.addEventListener('scroll',function(){if(!tick){requestAnimationFrame(function(){if(window.scrollY>400)btt.classList.add('visible');else btt.classList.remove('visible');tick=false;});tick=true;}});
 btt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
 
 // Upload
-var upDrop=document.getElementById('uploadDrop'),upPH=document.getElementById('uploadPH'),upPrev=document.getElementById('uploadImgPreview'),upFile=document.getElementById('uploadFileInput'),uploadedFile=null,uploadedDU=null;
+var upDrop=document.getElementById('uploadDrop'),upPH=document.getElementById('uploadPH'),upPrev=document.getElementById('uploadImgPreview'),upFile=document.getElementById('uploadFileInput'),uploadedDU=null;
 upDrop.addEventListener('click',function(){upFile.click();});
-upFile.addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;if(f.size>10*1024*1024){toast('图片不能超过 10MB');return;}uploadedFile=f;var r=new FileReader();r.onload=function(ev){upPrev.src=ev.target.result;upPrev.style.display='block';upPH.style.display='none';upDrop.classList.add('has-img');uploadedDU=ev.target.result;};r.readAsDataURL(f);});
-
-// Compress image before storing
+upFile.addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;if(f.size>10*1024*1024){toast('图片不能超过 10MB');return;}var r=new FileReader();r.onload=function(ev){upPrev.src=ev.target.result;upPrev.style.display='block';upPH.style.display='none';upDrop.classList.add('has-img');uploadedDU=ev.target.result;};r.readAsDataURL(f);});
 function compressImage(dataUrl,maxW){return new Promise(function(resolve){var img=new Image();img.onload=function(){var w=Math.min(img.width,maxW),h=Math.round(img.height*(w/img.width));var c=document.createElement('canvas');c.width=w;c.height=h;var cx=c.getContext('2d');cx.drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',.75));};img.src=dataUrl;});}
-
-var GK='poster_gallery_items';
-function getG(){try{return JSON.parse(localStorage.getItem(GK))||[];}catch(e){return[];}}
 
 document.getElementById('uploadSubmitBtn').addEventListener('click',function(){
     var nameV=document.getElementById('uploadName').value.trim();if(!nameV){toast('请输入海报人物姓名');return;}
     if(!uploadedDU){toast('请先上传海报图片');return;}
     var btn=document.getElementById('uploadSubmitBtn'),orig=btn.innerHTML,prog=document.getElementById('uploadProgress');
-    btn.disabled=true;btn.innerHTML='上传中...';prog.style.display='block';prog.innerHTML='<span class="spinner"></span>正在压缩图片...';
-
+    btn.disabled=true;btn.innerHTML='上传中...';prog.style.display='block';prog.innerHTML='<span class="spinner"></span>正在压缩并上传...';
     compressImage(uploadedDU,800).then(function(compressed){
-        prog.innerHTML='<span class="spinner"></span>正在保存...';
-        var g=getG();
-        g.unshift({id:Date.now(),name:nameV,image:compressed,time:new Date().toLocaleString('zh-CN')});
-        if(g.length>100)g=g.slice(0,100);
-        try{localStorage.setItem(GK,JSON.stringify(g));prog.style.display='none';btn.disabled=false;btn.innerHTML=orig;toast('上传成功！已汇入画廊');upPrev.style.display='none';upPH.style.display='block';upDrop.classList.remove('has-img');uploadedFile=null;uploadedDU=null;upFile.value='';document.getElementById('uploadName').value='';}catch(e){prog.style.display='none';btn.disabled=false;btn.innerHTML=orig;toast('图片太大，请换一张小一点的');}
-    }).catch(function(){prog.style.display='none';btn.disabled=false;btn.innerHTML=orig;toast('上传失败');});
+        return sb.from('posters').insert({name:nameV,image:compressed}).select();
+    }).then(function(res){
+        if(res.error)throw new Error(res.error.message);
+        prog.style.display='none';btn.disabled=false;btn.innerHTML=orig;toast('上传成功！已汇入共享画廊');
+        upPrev.style.display='none';upPH.style.display='block';upDrop.classList.remove('has-img');uploadedDU=null;upFile.value='';document.getElementById('uploadName').value='';
+    }).catch(function(e){prog.style.display='none';btn.disabled=false;btn.innerHTML=orig;toast('上传失败: '+(e.message||'网络错误'));console.error(e);});
 });
 
-// Gallery
+// Gallery (Supabase shared)
+var isAdmin=false,adminKey='';
+(function(){var k=localStorage.getItem('admin_key');if(k){adminKey=k;isAdmin=true;}})();
 function openG(){
-    var g=getG(),grid=document.getElementById('galleryGrid'),emp=document.getElementById('galleryEmpty');grid.innerHTML='';
-    if(g.length===0){emp.style.display='block';}else{emp.style.display='none';
-        g.forEach(function(it){var d=document.createElement('div');d.className='gallery-item';d.innerHTML='<img src="'+it.image+'" alt="'+esc(it.name||'')+' 海报" loading="lazy"><div class="info"><strong>'+esc(it.name||'')+'</strong><br>'+it.time+'</div>';d.addEventListener('click',function(){document.getElementById('lightboxImg').src=it.image;document.getElementById('lightbox').classList.add('open');document.body.style.overflow='hidden';});grid.appendChild(d);});
-    }
+    var grid=document.getElementById('galleryGrid'),emp=document.getElementById('galleryEmpty');grid.innerHTML='';
+    sb.from('posters').select('*').order('created_at',{ascending:false}).limit(100).then(function(res){
+        if(res.error){emp.style.display='block';emp.textContent='加载失败，请刷新重试';return;}
+        var g=res.data;
+        if(!g||g.length===0){emp.style.display='block';emp.textContent='还没有人上传海报，来做第一个吧！';}else{emp.style.display='none';
+            g.forEach(function(it){var d=document.createElement('div');d.className='gallery-item';
+                var timeStr=it.created_at?new Date(it.created_at).toLocaleString('zh-CN'):'';
+                d.innerHTML='<img src="'+it.image+'" alt="'+esc(it.name||'')+' 海报" loading="lazy"><div class="info"><strong>'+esc(it.name||'')+'</strong><br>'+timeStr+'</div>';
+                if(isAdmin){var db=document.createElement('button');db.className='del-btn';db.textContent='×';db.title='删除';db.addEventListener('click',function(e){e.stopPropagation();deletePoster(it.id);});d.appendChild(db);}
+                d.querySelector('img').addEventListener('click',function(){document.getElementById('lightboxImg').src=it.image;document.getElementById('lightbox').classList.add('open');document.body.style.overflow='hidden';});
+                grid.appendChild(d);
+            });
+        }
+    });
     document.getElementById('galleryModal').classList.add('open');document.body.style.overflow='hidden';
 }
+function deletePoster(id){if(!confirm('确定要删除这张海报吗？'))return;sb.rpc('delete_poster',{poster_id:id,admin_key:adminKey}).then(function(res){if(res.error){toast('删除失败: '+res.error.message);return;}if(res.data===false){toast('密码错误，无权限删除');return;}toast('已删除');openG();});}
 function closeG(){document.getElementById('galleryModal').classList.remove('open');document.body.style.overflow='';}
 document.getElementById('galleryModal').addEventListener('click',function(e){if(e.target===this)closeG();});
 document.getElementById('lightbox').addEventListener('click',function(){this.classList.remove('open');document.body.style.overflow='';});
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+// Admin: click footer signature 5 times to set password
+var cc=0;document.querySelector('footer .sig').addEventListener('click',function(){cc++;if(cc>=5){cc=0;var pw=prompt('管理员密码（用于删除海报）:',localStorage.getItem('admin_key')||'pengcong2026');if(pw){localStorage.setItem('admin_key',pw);adminKey=pw;isAdmin=true;toast('管理员已就绪，画廊中将显示删除按钮');}}setTimeout(function(){cc=0;},2000);});
 
 document.getElementById('downloadAllBtn').addEventListener('click',dlAll);
 document.getElementById('wechatShareBtn').addEventListener('click',wxShare);
