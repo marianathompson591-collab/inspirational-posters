@@ -337,6 +337,7 @@
     ];
     var imgPath = 'images/';
     var generatedDataUrl = null;
+    var AI_API_KEY = '', AI_DAILY_LIMIT = 20, hasAI = false;
 
     var list = document.getElementById('posterList');
     posters.forEach(function(p) {
@@ -481,9 +482,9 @@
         if (quote2) quotes.push(quote2);
         if (quote3) quotes.push(quote3);
 
-        var AI_DAILY_LIMIT = 20;
-        var AI_API_KEY = localStorage.getItem('site_ai_key') || '';
-        var hasAI = !!(AI_API_KEY && AI_API_KEY.length > 10);
+        AI_DAILY_LIMIT = parseInt(localStorage.getItem('site_ai_limit')||'20');
+        AI_API_KEY = localStorage.getItem('site_ai_key') || '';
+        hasAI = !!(AI_API_KEY && AI_API_KEY.length > 10);
 
         var progressEl = document.getElementById('generateProgress');
         progressEl.style.display = 'block';
@@ -519,14 +520,28 @@
 
         var prompt = 'A beautiful inspirational poster portrait of '+nameVal+'. Style: '+styleVal+'. Dark cinematic moody background, professional lighting, elegant magazine composition, poster design, high quality, 3:4 portrait orientation. NO text, NO letters, NO words, NO watermarks in the image. Clean dark background for text overlay.';
 
-        fetch('https://api.siliconflow.cn/v1/images/generations', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+AI_API_KEY },
-            body: JSON.stringify({ model: 'black-forest-labs/FLUX.1-pro', prompt: prompt, image_size: '864x1152', batch_size: 1, num_inference_steps: 28 })
-        }).then(function(r){return r.json();}).then(function(data){
+        // Try FLUX.1-dev first (most reliable on SiliconFlow)
+        var model = 'black-forest-labs/FLUX.1-dev';
+        progressEl.innerHTML = '<span class="spinner"></span>AI 正在生成海报背景（约 8-15 秒）...';
+
+        function tryGenerate(m) {
+            return fetch('https://api.siliconflow.cn/v1/images/generations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer '+AI_API_KEY },
+                body: JSON.stringify({ model: m, prompt: prompt, image_size: '768x1024', batch_size: 1, num_inference_steps: 25, output_format: 'jpeg' })
+            }).then(function(r) {
+                if (!r.ok) return r.json().then(function(e) { throw new Error('HTTP '+r.status+': '+(e.message||JSON.stringify(e))); });
+                return r.json();
+            });
+        }
+
+        tryGenerate(model).then(function(data){
             if (data.error) throw new Error(data.message||data.error);
-            var imgUrl = data.images && data.images[0] ? data.images[0].url : null;
-            if (!imgUrl) throw new Error('No image returned');
+            var imgUrl = data.images && data.images[0] ? (data.images[0].url || data.images[0].b64_json) : null;
+            if (!imgUrl) {
+                if (data.data && data.data[0]) imgUrl = data.data[0].url || data.data[0].b64_json;
+            }
+            if (!imgUrl) throw new Error('API 返回成功但未包含图片，请检查模型是否可用');
             // Download the AI image as data URL
             return fetch(imgUrl).then(function(r){return r.blob();}).then(function(blob){
                 return new Promise(function(resolve, reject){
@@ -542,8 +557,9 @@
                 finishPosterRender(progressEl, btn, nameVal, quotes[0], styleVal);
             });
         }).catch(function(e){
-            console.error(e); progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报';
-            showToast('AI 生成失败，使用普通模式生成');
+            console.error('AI error:', e.message || e);
+            progressEl.style.display='none'; btn.disabled=false; btn.innerHTML='生成海报';
+            showToast('AI 生成失败: '+(e.message||'网络错误')+'，已用普通模式');
             // Fallback to canvas-only
             setTimeout(function() {
                 try { renderPoster(nameVal, lifespan, quotes, styleVal, null); finishPosterRender(progressEl, btn, nameVal, quotes[0], styleVal); }
