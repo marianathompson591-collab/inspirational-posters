@@ -149,13 +149,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/umd/supabase.min.js"></script>
 <script>
 (function(){
-var SUPABASE_URL='https://sjpjuaxyxtadvtoextlu.supabase.co';
-var SUPABASE_KEY='sb_publishable_mmTNaC7RuO2T0oo6z5VQUA_K9YPclsH';
-var sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 var posters=[{name:'史蒂夫·乔布斯',file:'史蒂夫·乔布斯_励志海报.jpg',dl:'史蒂夫·乔布斯说你一定行.jpg'},{name:'段永平',file:'段永平_励志海报.jpg',dl:'段永平说你一定行.jpg'},{name:'查理·芒格',file:'查理·芒格_励志海报.jpg',dl:'查理·芒格说你一定行.jpg'},{name:'凯文·凯利',file:'凯文·凯利_励志海报.jpg',dl:'凯文·凯利说你一定行.jpg'},{name:'黄峥',file:'黄峥_励志海报.jpg',dl:'黄峥说你一定行.jpg'},{name:'张一鸣',file:'张一鸣_励志海报.jpg',dl:'张一鸣说你一定行.jpg'}];
 var imgP='images/';
 var pl=document.getElementById('posterList');
 posters.forEach(function(p){var d=document.createElement('div');d.className='poster-item';d.innerHTML='<div class="poster-iw"><img class="poster-img" src="'+imgP+p.file+'" alt="'+p.name+' 励志海报" loading="lazy"></div><a class="btn btn-dl" href="'+imgP+p.file+'" download="'+p.dl+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>下载海报</a>';pl.appendChild(d);});
+
+var SUPABASE_URL='https://sjpjuaxyxtadvtoextlu.supabase.co';
+var SUPABASE_KEY='sb_publishable_mmTNaC7RuO2T0oo6z5VQUA_K9YPclsH';
+var sb=null;try{sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);}catch(e){console.warn('Supabase init failed, gallery disabled');}
 
 var tt;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show');},2500);}
 function dlAll(){var b=document.getElementById('downloadAllBtn'),o=b.innerHTML;b.disabled=true;b.innerHTML='打包中...';if(typeof JSZip==='undefined'){toast('JSZip 加载失败');b.disabled=false;b.innerHTML=o;return;}var z=new JSZip(),f=z.folder('励志海报'),t=posters.length;var fts=posters.map(function(p,i){b.innerHTML='打包中 ('+(i+1)+'/'+t+')...';return fetch(imgP+p.file).then(function(r){return r.blob();}).then(function(bl){f.file(p.dl,bl);});});Promise.all(fts).then(function(){b.innerHTML='生成 ZIP...';return z.generateAsync({type:'blob'});}).then(function(zb){var u=URL.createObjectURL(zb),a=document.createElement('a');a.href=u;a.download='励志海报_全部.zip';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u);},1000);toast('ZIP 下载完成');}).catch(function(e){console.error(e);toast('打包失败');}).finally(function(){b.disabled=false;b.innerHTML=o;});}
@@ -178,6 +179,7 @@ document.getElementById('uploadSubmitBtn').addEventListener('click',function(){
     var btn=document.getElementById('uploadSubmitBtn'),orig=btn.innerHTML,prog=document.getElementById('uploadProgress');
     btn.disabled=true;btn.innerHTML='上传中...';prog.style.display='block';prog.innerHTML='<span class="spinner"></span>正在压缩并上传...';
     compressImage(uploadedDU,800).then(function(compressed){
+        if(!sb)throw new Error('画廊服务未就绪');
         return sb.from('posters').insert({name:nameV,image:compressed}).select();
     }).then(function(res){
         if(res.error)throw new Error(res.error.message);
@@ -191,6 +193,7 @@ var isAdmin=false,adminKey='';
 (function(){var k=localStorage.getItem('admin_key');if(k){adminKey=k;isAdmin=true;}})();
 function openG(){
     var grid=document.getElementById('galleryGrid'),emp=document.getElementById('galleryEmpty');grid.innerHTML='';
+    if(!sb){emp.style.display='block';emp.textContent='画廊服务加载中，请刷新页面';return;}
     sb.from('posters').select('*').order('created_at',{ascending:false}).limit(100).then(function(res){
         if(res.error){emp.style.display='block';emp.textContent='加载失败，请刷新重试';return;}
         var g=res.data;
